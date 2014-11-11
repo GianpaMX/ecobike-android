@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,7 +8,41 @@
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="@dimen/map_height"
-        android:name="com.google.android.gms.maps.MapFragment" />
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"
+        android:id="@+id/center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bikes 99"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:id="@+id/text_bikes"
+        android:layout_below="@+id/map"
+        android:layout_toLeftOf="@+id/center"
+        android:padding="48dp"
+        android:layout_toStartOf="@+id/center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="99 Slots"
+        android:id="@+id/text_slots"
+        android:layout_below="@+id/map"
+        android:padding="48dp"
+        android:layout_toRightOf="@+id/center"
+        android:layout_toEndOf="@+id/center" />
 
 
-</FrameLayout>
+</RelativeLayout>
