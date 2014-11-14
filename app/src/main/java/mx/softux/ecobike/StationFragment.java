@@ -18,8 +18,21 @@ import com.squareup.picasso.Picasso;
 import org.paoloconte.smoothchart.SmoothLineChart;
 
 public class StationFragment extends Fragment {
+    private StationModel station;
+
     public StationFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            station = savedInstanceState.getParcelable(P.Station.STATION);
+        } else if (getArguments() != null && getArguments().containsKey(P.Station.STATION)) {
+            station = getArguments().getParcelable(P.Station.STATION);
+        }
     }
 
     @Override
@@ -31,6 +44,14 @@ public class StationFragment extends Fragment {
         viewPager.setAdapter(adapter);
 
         return view;
+    }
+
+    public void setStation(StationModel station) {
+        this.station = station;
+    }
+
+    public StationModel getStation() {
+        return station;
     }
 
     public static class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -64,12 +85,13 @@ public class StationFragment extends Fragment {
     }
 
     public static class MapFragment extends Fragment {
-        public MapFragment() {}
+        public MapFragment() {
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ImageView imageView = new ImageView(getActivity());
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+            imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             Picasso.with(getActivity()).load("https://maps.googleapis.com/maps/api/staticmap?center=Berkeley,CA&zoom=14&size=400x200").into(imageView);
             return imageView;
         }
