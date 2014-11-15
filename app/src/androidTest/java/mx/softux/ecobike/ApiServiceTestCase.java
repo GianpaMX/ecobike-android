@@ -40,13 +40,23 @@ public class ApiServiceTestCase extends ServiceTestCase<MockApiService> {
         apiService = binder.getApiService();
     }
 
-    class Receiver extends BroadcastReceiver {
+    private static class Receiver extends BroadcastReceiver {
         public Object lock = new Object();
         public boolean received = false;
+        public OnResponseListener onResponseListener = null;
+
+        public static interface OnResponseListener {
+            public void onResponse(int requestId);
+            public NetworkService.Response getResponse();
+        }
 
         @Override
         public void onReceive(Context context, Intent intent) {
             synchronized (lock) {
+                if(onResponseListener != null) {
+                    onResponseListener.onResponse(intent.getIntExtra(P.NetwrokService.REQUEST_ID, 0));
+                }
+
                 received = true;
                 lock.notify();
             }
@@ -85,6 +95,33 @@ public class ApiServiceTestCase extends ServiceTestCase<MockApiService> {
         });
 
         receiver.waitUpTo(10 * SECOND);
+
+        broadcastManager.unregisterReceiver(receiver);
+    }
+
+    public void testStationRequest() throws InterruptedException, TimeoutException {
+        Receiver receiver = new Receiver();
+        broadcastManager.registerReceiver(receiver, new IntentFilter(NetworkService.RESPONSE));
+
+        Integer id = apiService.requestStation(1);
+        receiver.onResponseListener = new Receiver.OnResponseListener() {
+            private NetworkService.Response response;
+
+            @Override
+            public void onResponse(int requestId) {
+                response = apiService.getResponse(requestId);
+            }
+
+            @Override
+            public NetworkService.Response getResponse() {
+                return response;
+            }
+        };
+        receiver.waitUpTo(10 * SECOND);
+
+        assert(receiver.onResponseListener.getResponse().getParcelable() instanceof StationModel);
+        StationModel station = (StationModel) receiver.onResponseListener.getResponse().getParcelable();
+        assertEquals((int) station.number, 1);
 
         broadcastManager.unregisterReceiver(receiver);
     }

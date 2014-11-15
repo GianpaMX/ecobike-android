@@ -9,7 +9,7 @@ import org.json.JSONObject;
  * Created by gianpa on 11/14/14.
  */
 public class StationModel extends Model {
-    private Integer number;
+    public Integer number;
 
     public StationModel() {
     }
