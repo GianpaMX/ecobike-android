@@ -1,9 +1,8 @@
 package mx.softux.ecobike;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -30,8 +29,12 @@ public abstract class NetworkService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        queue = Volley.newRequestQueue(this);
+        queue = newRequestQueue(this);
         broadcastManager = LocalBroadcastManager.getInstance(this);
+    }
+
+    public RequestQueue newRequestQueue(Context context) {
+        return Volley.newRequestQueue(this);
     }
 
     public Integer requestGet(String url, JSONObject jsonRequest, final ResponseParcelable responseParcelable) {
