@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -13,6 +14,8 @@ import com.android.volley.Request;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -38,6 +41,17 @@ public class ApiServiceTestCase extends ServiceTestCase<MockApiService> {
         MockApiService.Binder binder = (MockApiService.Binder) bindService(mockApiService);
 
         apiService = binder.getApiService();
+        ((MockApiService)apiService).setDataToReturn(readResource(R.raw.station));
+    }
+
+    private byte[] readResource(int id) throws IOException {
+        Resources res = getContext().getResources();
+        InputStream in_s = res.openRawResource(id);
+
+        byte[] b = new byte[in_s.available()];
+        in_s.read(b);
+
+        return b;
     }
 
     private static class Receiver extends BroadcastReceiver {
@@ -118,11 +132,10 @@ public class ApiServiceTestCase extends ServiceTestCase<MockApiService> {
             }
         };
         receiver.waitUpTo(10 * SECOND);
+        broadcastManager.unregisterReceiver(receiver);
 
         assert(receiver.onResponseListener.getResponse().getParcelable() instanceof StationModel);
         StationModel station = (StationModel) receiver.onResponseListener.getResponse().getParcelable();
         assertEquals((int) station.number, 1);
-
-        broadcastManager.unregisterReceiver(receiver);
     }
 }

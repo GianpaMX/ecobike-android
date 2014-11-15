@@ -12,6 +12,12 @@ android {
         versionName "1.0"
     }
     buildTypes {
+        debug {
+            android.sourceSets {
+                main.res.srcDirs = ['src/main/res', 'src/androidTest/res']
+            }
+        }
+
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

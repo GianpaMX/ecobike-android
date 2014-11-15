@@ -19,7 +19,7 @@ public class StationModel extends Model {
     }
 
     public StationModel(JSONObject jsonObject) {
-
+        number = (Integer) jsonObject.opt("number");
     }
 
     @Override

@@ -14,8 +14,12 @@ import java.io.File;
  * Created by gianpa on 11/15/14.
  */
 public class MockApiService extends ApiService {
-    /** Default on-disk cache directory. */
+    /**
+     * Default on-disk cache directory.
+     */
     private static final String DEFAULT_CACHE_DIR = "volley";
+
+    private MockNetwork mockNetwork;
 
     @Override
     public RequestQueue newRequestQueue(Context context) {
@@ -29,12 +33,15 @@ public class MockApiService extends ApiService {
         } catch (PackageManager.NameNotFoundException e) {
         }
 
-        MockNetwork mockNetwork = new MockNetwork();
-        mockNetwork.setDataToReturn("{}".getBytes());
+        mockNetwork = new MockNetwork();
 
         RequestQueue queue = new RequestQueue(new DiskBasedCache(cacheDir), mockNetwork);
         queue.start();
 
         return queue;
+    }
+
+    public void setDataToReturn(byte[] data) {
+        this.mockNetwork.setDataToReturn(data);
     }
 }
