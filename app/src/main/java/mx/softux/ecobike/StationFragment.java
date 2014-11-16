@@ -19,6 +19,7 @@ import org.paoloconte.smoothchart.SmoothLineChart;
 
 public class StationFragment extends Fragment {
     private StationModel station;
+    private ViewPager viewPager;
 
     public StationFragment() {
         // Required empty public constructor
@@ -39,9 +40,7 @@ public class StationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_station, container, false);
 
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.view_pager);
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
-        viewPager.setAdapter(adapter);
+        viewPager = (ViewPager) view.findViewById(R.id.view_pager);
 
         return view;
     }
@@ -54,6 +53,8 @@ public class StationFragment extends Fragment {
 
     public void updateView() {
         if (station != null) {
+            ViewPagerAdapter adapter = new ViewPagerAdapter(station, getFragmentManager());
+            viewPager.setAdapter(adapter);
         }
     }
 
@@ -68,16 +69,18 @@ public class StationFragment extends Fragment {
 
     public static class ViewPagerAdapter extends FragmentPagerAdapter {
         private static final int NUM_ITEMS = 2;
+        private final StationModel station;
 
-        public ViewPagerAdapter(FragmentManager fm) {
+        public ViewPagerAdapter(StationModel station, FragmentManager fm) {
             super(fm);
+            this.station = station;
         }
 
         @Override
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return new MapFragment();
+                    return MapFragment.newInstance(station);
                 case 1:
                     return new StationChartFragment();
             }
@@ -97,14 +100,32 @@ public class StationFragment extends Fragment {
     }
 
     public static class MapFragment extends Fragment {
+        private StationModel station;
+
+        public static MapFragment newInstance(StationModel station) {
+            MapFragment mapFragment = new MapFragment();
+            Bundle args = new Bundle();
+            args.putParcelable(P.Station.STATION, station);
+            mapFragment.setArguments(args);
+            return mapFragment;
+        }
+
         public MapFragment() {
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            station = getArguments().getParcelable(P.Station.STATION);
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             ImageView imageView = new ImageView(getActivity());
             imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            Picasso.with(getActivity()).load("https://maps.googleapis.com/maps/api/staticmap?center=Berkeley,CA&zoom=14&size=400x200").into(imageView);
+            String mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=%1$f,%2$f&zoom=%3$d&size=%4$dx%5$d";
+            mapUrl = String.format(mapUrl, station.location.x, station.location.y, 17, 800, 400);
+            Picasso.with(getActivity()).load(mapUrl).into(imageView);
             return imageView;
         }
     }

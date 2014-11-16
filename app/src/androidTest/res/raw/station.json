@@ -1,4 +1,8 @@
 {
-    "number" : 1,
-    "name" : "uno"
+  "number": 1,
+  "name": "Río Balsas-Río Sena",
+  "location": {
+    "latitude": 19.4333659,
+    "longitude": -99.1679689
+  }
 }

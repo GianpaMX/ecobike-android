@@ -1,16 +1,22 @@
 package mx.softux.ecobike;
 
+import android.graphics.PointF;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * Created by gianpa on 11/14/14.
  */
 public class StationModel extends Model {
+    private static final String TAG = StationModel.class.getSimpleName();
+
     public Integer number;
     public String name;
+    public PointF location;
 
     public StationModel() {
     }
@@ -18,11 +24,19 @@ public class StationModel extends Model {
     public StationModel(Parcel source) {
         number = source.readInt();
         name = source.readString();
+        location = source.readParcelable(PointF.class.getClassLoader());
     }
 
     public StationModel(JSONObject jsonObject) {
         number = (Integer) jsonObject.opt("number");
         name = (String) jsonObject.opt("name");
+        try {
+            double x = jsonObject.getJSONObject("location").optDouble("latitude");
+            double y = jsonObject.getJSONObject("location").optDouble("longitude");
+            location = new PointF((float) x, (float) y);
+        } catch (JSONException e) {
+            Log.e(TAG, "location", e);
+        }
     }
 
     @Override
@@ -34,6 +48,7 @@ public class StationModel extends Model {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(number);
         dest.writeString(name);
+        dest.writeParcelable(location, flags);
     }
 
     public static final Parcelable.Creator<StationModel> CREATOR = new Parcelable.Creator<StationModel>() {
