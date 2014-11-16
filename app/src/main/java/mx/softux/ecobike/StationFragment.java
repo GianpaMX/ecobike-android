@@ -46,8 +46,21 @@ public class StationFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        updateView();
+    }
+
+    public void updateView() {
+        if (station != null) {
+            getActivity().setTitle(getString(R.string.station_activity_title, station.number));
+        }
+    }
+
     public void setStation(StationModel station) {
         this.station = station;
+        updateView();
     }
 
     public StationModel getStation() {

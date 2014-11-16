@@ -32,19 +32,22 @@ public class StationActivity extends ActionBarActivity {
 
         if (savedInstanceState == null) {
             if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(P.Station.STATION)) {
-                station = getIntent().getParcelableExtra(P.Station.STATION);
-                updateFragmentStation();
+                updateFragmentStation((StationModel) getIntent().getParcelableExtra(P.Station.STATION));
             }
         } else {
             if (savedInstanceState.containsKey(P.NetwrokService.REQUEST_ID)) {
                 stationRequestId = savedInstanceState.getInt(P.NetwrokService.REQUEST_ID);
+            } else {
+                updateFragmentStation((StationModel) savedInstanceState.getParcelable(P.Station.STATION));
             }
         }
 
         broadcastManager = LocalBroadcastManager.getInstance(this);
     }
 
-    private void updateFragmentStation() {
+    private void updateFragmentStation(StationModel station) {
+        this.station = station;
+
         StationFragment stationFragment = (StationFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_station);
         stationFragment.setStation(station);
     }
@@ -67,6 +70,17 @@ public class StationActivity extends ActionBarActivity {
 
         if (apiService != null)
             unbindService(apiServiceConnection);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if(stationRequestId != null) {
+            outState.putInt(P.NetwrokService.REQUEST_ID, stationRequestId);
+        } else {
+            outState.putParcelable(P.Station.STATION, station);
+        }
     }
 
     @Override
@@ -123,7 +137,7 @@ public class StationActivity extends ActionBarActivity {
             return;
         }
 
-        station = (StationModel) response.getParcelable();
-        updateFragmentStation();
+        stationRequestId = null;
+        updateFragmentStation((StationModel) response.getParcelable());
     }
 }

@@ -12,9 +12,8 @@ import org.json.JSONObject;
 public class ApiService extends NetworkService {
     private final IBinder binder = new Binder();
 
-
     public Integer requestStation(int number) {
-        return requestGet("url", null, new ResponseParcelable() {
+        return requestGet("http://192.168.56.1:3000/station", null, new ResponseParcelable() {
             @Override
             public Parcelable newInstance(JSONObject jsonObject) {
                 return new StationModel(jsonObject);
