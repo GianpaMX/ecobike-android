@@ -54,7 +54,6 @@ public class StationFragment extends Fragment {
 
     public void updateView() {
         if (station != null) {
-            getActivity().setTitle(getString(R.string.station_activity_title, station.number));
         }
     }
 

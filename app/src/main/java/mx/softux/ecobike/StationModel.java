@@ -10,16 +10,19 @@ import org.json.JSONObject;
  */
 public class StationModel extends Model {
     public Integer number;
+    public String name;
 
     public StationModel() {
     }
 
     public StationModel(Parcel source) {
         number = source.readInt();
+        name = source.readString();
     }
 
     public StationModel(JSONObject jsonObject) {
         number = (Integer) jsonObject.opt("number");
+        name = (String) jsonObject.opt("name");
     }
 
     @Override
@@ -30,6 +33,7 @@ public class StationModel extends Model {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(number);
+        dest.writeString(name);
     }
 
     public static final Parcelable.Creator<StationModel> CREATOR = new Parcelable.Creator<StationModel>() {

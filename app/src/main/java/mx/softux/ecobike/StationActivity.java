@@ -48,6 +48,9 @@ public class StationActivity extends ActionBarActivity {
     private void updateFragmentStation(StationModel station) {
         this.station = station;
 
+        setTitle(getString(R.string.station_activity_title, station.number));
+        getSupportActionBar().setSubtitle(station.name);
+
         StationFragment stationFragment = (StationFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_station);
         stationFragment.setStation(station);
     }
