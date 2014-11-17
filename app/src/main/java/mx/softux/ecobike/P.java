@@ -6,7 +6,7 @@ package mx.softux.ecobike;
 public class P {
     public static class Station {
         public static final String STATION = "STATION";
-        public static final String STATION_ID = "STATION_ID";
+        public static final String STATION_NUMBER = "STATION_NUMBER";
     }
 
     public static class NetwrokService {

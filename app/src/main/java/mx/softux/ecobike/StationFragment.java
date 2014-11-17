@@ -9,14 +9,15 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
+import com.squareup.picasso.Picasso;
 
 public class StationFragment extends Fragment {
     private StationModel station;
     private StatsLineChart bikesLineChart;
-    private NetworkImageView mapImageView;
+    private ImageView mapImageView;
     private TextView bikes;
     private TextView slots;
     private TextView updateTime;
@@ -48,7 +49,7 @@ public class StationFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         bikesLineChart = (StatsLineChart) view.findViewById(R.id.bikes_line_chart);
-        mapImageView = (NetworkImageView) view.findViewById(R.id.map_image_view);
+        mapImageView = (ImageView) view.findViewById(R.id.map_image_view);
         bikes = (TextView) view.findViewById(R.id.bikes_text_view);
         slots = (TextView) view.findViewById(R.id.slots_text_view);
         updateTime = (TextView) view.findViewById(R.id.update_time_text_view);
@@ -63,11 +64,14 @@ public class StationFragment extends Fragment {
     }
 
     public void updateView() {
-        if (station != null && ((NetworkService.HostInterface) getActivity()).getNetworkService() != null) {
-            String mapUrl = "https://maps.googleapis.com/maps/api/staticmap?&markers=color:red|%1$f,%2$f&zoom=%3$d&size=%4$dx%5$d";
-            mapUrl = String.format(mapUrl, station.location.x, station.location.y, 18, 400, 200);
+        if (station != null) {
+            getView().findViewById(R.id.progress_bar).setVisibility(View.GONE);
+            getView().findViewById(R.id.layout).setVisibility(View.VISIBLE);
 
-            mapImageView.setImageUrl(mapUrl, ((NetworkService.HostInterface) getActivity()).getNetworkService().getImageLoader());
+            String mapUrl = "https://maps.googleapis.com/maps/api/staticmap?&markers=color:red|%1$f,%2$f&zoom=%3$d&size=%4$dx%5$d";
+            mapUrl = String.format(mapUrl, station.location.x, station.location.y, 18, 400, 200).replace("|", "%7C");
+
+            Picasso.with(getActivity()).load(mapUrl).into(mapImageView);
 
             bikes.setText(String.valueOf(station.bikes));
             slots.setText(String.valueOf(station.slots));
@@ -78,6 +82,9 @@ public class StationFragment extends Fragment {
 
             updateTimeHandler.removeCallbacks(updateTimeTask);
             updateTimeHandler.postDelayed(updateTimeTask, 1000);
+        } else {
+            getView().findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.layout).setVisibility(View.GONE);
         }
     }
 

@@ -3,16 +3,12 @@ package mx.softux.ecobike;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.util.LruCache;
-import android.util.DisplayMetrics;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -26,7 +22,6 @@ public abstract class NetworkService extends Service {
     public static final String RESPONSE = "RESPONSE";
 
     private RequestQueue queue;
-    private ImageLoader imageLoader;
 
     private Map<Integer, Response> responses = new HashMap<Integer, Response>();
     private AtomicInteger sequence = new AtomicInteger();
@@ -37,13 +32,6 @@ public abstract class NetworkService extends Service {
         super.onCreate();
         queue = newRequestQueue(this);
         broadcastManager = LocalBroadcastManager.getInstance(this);
-    }
-
-    public ImageLoader getImageLoader() {
-        if(imageLoader == null) {
-            imageLoader = new ImageLoader(queue, new LruBitmapCache(LruBitmapCache.getCacheSize(this)));
-        }
-        return imageLoader;
     }
 
     public RequestQueue newRequestQueue(Context context) {
@@ -93,8 +81,8 @@ public abstract class NetworkService extends Service {
         return response;
     }
 
-    public static interface HostInterface {
-        public NetworkService getNetworkService();
+    public void cancelRequest(int requestId) {
+        queue.cancelAll(requestId);
     }
 
     public static class Response {
@@ -137,42 +125,5 @@ public abstract class NetworkService extends Service {
 
     protected interface ResponseParcelable {
         public Parcelable newInstance(JSONObject jsonObject);
-    }
-
-    private static class LruBitmapCache extends LruCache<String, Bitmap> implements ImageLoader.ImageCache {
-
-        public LruBitmapCache(int maxSize) {
-            super(maxSize);
-        }
-
-        public LruBitmapCache(Context ctx) {
-            this(getCacheSize(ctx));
-        }
-
-        @Override
-        protected int sizeOf(String key, Bitmap value) {
-            return value.getRowBytes() * value.getHeight();
-        }
-
-        @Override
-        public Bitmap getBitmap(String url) {
-            return get(url);
-        }
-
-        @Override
-        public void putBitmap(String url, Bitmap bitmap) {
-            put(url, bitmap);
-        }
-
-        // Returns a cache size equal to approximately three screens worth of images.
-        public static int getCacheSize(Context ctx) {
-            final DisplayMetrics displayMetrics = ctx.getResources().getDisplayMetrics();
-            final int screenWidth = displayMetrics.widthPixels;
-            final int screenHeight = displayMetrics.heightPixels;
-            // 4 bytes per pixel
-            final int screenBytes = screenWidth * screenHeight * 4;
-
-            return screenBytes * 3;
-        }
     }
 }
