@@ -2,8 +2,10 @@ package mx.softux.ecobike;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,9 @@ public class StationFragment extends Fragment {
     private NetworkImageView mapImageView;
     private TextView bikes;
     private TextView slots;
+    private TextView updateTime;
+
+    private Handler updateTimeHandler = new Handler();
 
     public StationFragment() {
         // Required empty public constructor
@@ -46,6 +51,7 @@ public class StationFragment extends Fragment {
         mapImageView = (NetworkImageView) view.findViewById(R.id.map_image_view);
         bikes = (TextView) view.findViewById(R.id.bikes_text_view);
         slots = (TextView) view.findViewById(R.id.slots_text_view);
+        updateTime = (TextView) view.findViewById(R.id.update_time_text_view);
 
         updateView();
     }
@@ -67,8 +73,39 @@ public class StationFragment extends Fragment {
             slots.setText(String.valueOf(station.slots));
 
             bikesLineChart.setData(station.stats);
+
+            updateTime.setText(DateUtils.getRelativeDateTimeString(getActivity(), station.updateTime, 0, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
+
+            updateTimeHandler.removeCallbacks(updateTimeTask);
+            updateTimeHandler.postDelayed(updateTimeTask, 1000);
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (station != null) {
+            updateTimeHandler.postDelayed(updateTimeTask, 1000);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (updateTimeHandler != null) {
+            updateTimeHandler.removeCallbacks(updateTimeTask);
+        }
+    }
+
+    private Runnable updateTimeTask = new Runnable() {
+        @Override
+        public void run() {
+            if (station != null) {
+                updateTime.setText(DateUtils.getRelativeDateTimeString(getActivity(), station.updateTime, 0, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
+                updateTimeHandler.postDelayed(this, 1000);
+            }
+        }
+    };
 
     public void setStation(StationModel station) {
         this.station = station;

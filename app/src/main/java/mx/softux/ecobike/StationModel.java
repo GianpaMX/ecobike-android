@@ -21,6 +21,7 @@ public class StationModel extends Model {
     public Integer bikes;
     public Integer slots;
     public Stat[] stats;
+    public Long updateTime;
 
     public StationModel() {
     }
@@ -32,6 +33,7 @@ public class StationModel extends Model {
         bikes = source.readInt();
         slots = source.readInt();
         stats = (Stat[]) source.readArray(Stat.class.getClassLoader());
+        updateTime = source.readLong();
     }
 
     public StationModel(JSONObject jsonObject) {
@@ -55,6 +57,7 @@ public class StationModel extends Model {
         } catch (JSONException e) {
             Log.e(TAG, "stats", e);
         }
+        updateTime = (Long) jsonObject.opt("updateTime");
     }
 
     @Override
@@ -70,6 +73,7 @@ public class StationModel extends Model {
         dest.writeInt(bikes);
         dest.writeInt(slots);
         dest.writeArray(stats);
+        dest.writeLong(updateTime);
     }
 
     public static final Parcelable.Creator<StationModel> CREATOR = new Parcelable.Creator<StationModel>() {
