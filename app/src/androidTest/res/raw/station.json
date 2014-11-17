@@ -1,8 +1,10 @@
 {
   "number": 1,
-  "name": "Río Balsas-Río Sena",
+  "name": "Río Balsas - Río Sena",
   "location": {
     "latitude": 19.4333659,
     "longitude": -99.1679689
-  }
+  },
+  "bikes": 12,
+  "slots": 8
 }

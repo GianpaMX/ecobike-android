@@ -17,6 +17,8 @@ public class StationModel extends Model {
     public Integer number;
     public String name;
     public PointF location;
+    public Integer bikes;
+    public Integer slots;
 
     public StationModel() {
     }
@@ -25,6 +27,8 @@ public class StationModel extends Model {
         number = source.readInt();
         name = source.readString();
         location = source.readParcelable(PointF.class.getClassLoader());
+        bikes = source.readInt();
+        slots = source.readInt();
     }
 
     public StationModel(JSONObject jsonObject) {
@@ -37,6 +41,8 @@ public class StationModel extends Model {
         } catch (JSONException e) {
             Log.e(TAG, "location", e);
         }
+        bikes = (Integer) jsonObject.opt("bikes");
+        slots = (Integer) jsonObject.opt("slots");
     }
 
     @Override
@@ -49,6 +55,8 @@ public class StationModel extends Model {
         dest.writeInt(number);
         dest.writeString(name);
         dest.writeParcelable(location, flags);
+        dest.writeInt(bikes);
+        dest.writeInt(slots);
     }
 
     public static final Parcelable.Creator<StationModel> CREATOR = new Parcelable.Creator<StationModel>() {

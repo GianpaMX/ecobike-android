@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 
@@ -17,6 +18,8 @@ public class StationFragment extends Fragment {
     private StationModel station;
     private SmoothLineChart bikesLineChart;
     private NetworkImageView mapImageView;
+    private TextView bikes;
+    private TextView slots;
 
     public StationFragment() {
         // Required empty public constructor
@@ -44,6 +47,8 @@ public class StationFragment extends Fragment {
 
         bikesLineChart = (SmoothLineChart) view.findViewById(R.id.bikes_line_chart);
         mapImageView = (NetworkImageView) view.findViewById(R.id.map_image_view);
+        bikes = (TextView) view.findViewById(R.id.bikes_text_view);
+        slots = (TextView) view.findViewById(R.id.slots_text_view);
 
         updateView();
     }
@@ -60,6 +65,9 @@ public class StationFragment extends Fragment {
             mapUrl = String.format(mapUrl, station.location.x, station.location.y, 18, 400, 200);
 
             mapImageView.setImageUrl(mapUrl, ((NetworkService.HostInterface) getActivity()).getNetworkService().getImageLoader());
+
+            bikes.setText(String.valueOf(station.bikes));
+            slots.setText(String.valueOf(station.slots));
 
             bikesLineChart.setData(new PointF[]{
                     new PointF(15, 39), // {x, y}
