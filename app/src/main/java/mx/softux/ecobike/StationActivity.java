@@ -30,6 +30,11 @@ public class StationActivity extends ActionBarActivity implements NetworkService
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        if (!ApiService.isRunning(this)) {
+            Intent apiService = new Intent(this, ApiService.class);
+            startService(apiService);
+        }
+
         if (savedInstanceState == null) {
             if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(P.Station.STATION)) {
                 updateFragmentStation((StationModel) getIntent().getParcelableExtra(P.Station.STATION));
@@ -79,7 +84,7 @@ public class StationActivity extends ActionBarActivity implements NetworkService
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if(stationRequestId != null) {
+        if (stationRequestId != null) {
             outState.putInt(P.NetwrokService.REQUEST_ID, stationRequestId);
         } else {
             outState.putParcelable(P.Station.STATION, station);
