@@ -6,4 +6,6 @@
     <string name="action_settings">Settings</string>
 
     <string name="station_activity_title">Station %1$d</string>
+    <string name="fragment_station_bikes_label">Bikes</string>
+    <string name="fragment_station_slots_label">Slots</string>
 </resources>

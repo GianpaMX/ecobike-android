@@ -116,6 +116,8 @@ public class StationActivity extends ActionBarActivity implements NetworkService
                     NetworkService.Response response = apiService.getResponse(stationRequestId);
                     onResponse(response);
                 }
+            } else {
+                updateFragmentStation(station);
             }
         }
 

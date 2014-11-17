@@ -1,47 +1,73 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_width="match_parent"
     tools:context="mx.softux.ecobike.StationFragment">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/map_height"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_centerInParent="true"
-        android:visibility="invisible"
-        android:id="@+id/center" />
-
-    <TextView
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bikes 99"
-        android:textAppearance="@android:style/TextAppearance.Large"
-        android:id="@+id/text_bikes"
-        android:layout_below="@+id/view_pager"
-        android:layout_toLeftOf="@+id/center"
-        android:padding="48dp"
-        android:layout_toStartOf="@+id/center" />
+        android:background="@android:color/white">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="99 Slots"
-        android:id="@+id/text_slots"
-        android:layout_below="@+id/view_pager"
-        android:padding="48dp"
-        android:layout_toRightOf="@+id/center"
-        android:layout_toEndOf="@+id/center" />
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/map_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/map_height"
+            android:scaleType="centerCrop"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="99"
+            android:id="@+id/bikes_text_view"
+            android:layout_alignLeft="@+id/map_image_view"
+            android:layout_alignTop="@+id/map_image_view"
+            android:layout_margin="@dimen/small_margin" />
+
+        <TextView
+            android:id="@+id/bikes_label_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_station_bikes_label"
+            android:layout_alignBaseline="@+id/bikes_text_view"
+            android:layout_toRightOf="@+id/bikes_text_view"
+            android:layout_toEndOf="@+id/bikes_text_view" />
 
 
-</RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="9"
+            android:id="@+id/slots_text_view"
+            android:layout_below="@+id/bikes_text_view"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:layout_alignRight="@+id/bikes_text_view" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_station_slots_label"
+            android:layout_alignBaseline="@+id/slots_text_view"
+            android:layout_alignLeft="@+id/bikes_label_text_view" />
+
+        <org.paoloconte.smoothchart.SmoothLineChart
+            android:id="@+id/bikes_line_chart"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/map_height"
+            android:layout_below="@+id/map_image_view"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+
+    </RelativeLayout>
+</ScrollView>
