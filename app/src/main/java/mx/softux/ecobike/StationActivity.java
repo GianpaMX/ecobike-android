@@ -1,6 +1,7 @@
 package mx.softux.ecobike;
 
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -19,6 +20,9 @@ public class StationActivity extends ActionBarActivity implements LoaderManager.
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Intent gcmRegisterService = new Intent(this, GcmRegisterIntentService.class);
+        startService(gcmRegisterService);
 
         getLoaderManager().initLoader(0, null, this);
     }
