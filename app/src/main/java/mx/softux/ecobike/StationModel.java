@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +20,7 @@ public class StationModel extends Model {
     public PointF location;
     public Integer bikes;
     public Integer slots;
+    public Stat[] stats;
 
     public StationModel() {
     }
@@ -29,6 +31,7 @@ public class StationModel extends Model {
         location = source.readParcelable(PointF.class.getClassLoader());
         bikes = source.readInt();
         slots = source.readInt();
+        stats = (Stat[]) source.readArray(Stat.class.getClassLoader());
     }
 
     public StationModel(JSONObject jsonObject) {
@@ -43,6 +46,15 @@ public class StationModel extends Model {
         }
         bikes = (Integer) jsonObject.opt("bikes");
         slots = (Integer) jsonObject.opt("slots");
+        try {
+            JSONArray statsJSONArray = jsonObject.getJSONArray("stats");
+            stats = new Stat[statsJSONArray.length()];
+            for (int i = 0; i < statsJSONArray.length(); i++) {
+                stats[i] = new Stat(statsJSONArray.getJSONObject(i));
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "stats", e);
+        }
     }
 
     @Override
@@ -57,6 +69,7 @@ public class StationModel extends Model {
         dest.writeParcelable(location, flags);
         dest.writeInt(bikes);
         dest.writeInt(slots);
+        dest.writeArray(stats);
     }
 
     public static final Parcelable.Creator<StationModel> CREATOR = new Parcelable.Creator<StationModel>() {
@@ -70,4 +83,49 @@ public class StationModel extends Model {
             return new StationModel[size];
         }
     };
+
+    public static class Stat implements Parcelable {
+        public String time;
+        public Integer bikes;
+        public Integer slots;
+
+        public Stat() {
+        }
+
+        public Stat(Parcel source) {
+            time = source.readString();
+            bikes = source.readInt();
+            slots = source.readInt();
+        }
+
+        public Stat(JSONObject jsonObject) {
+            time = (String) jsonObject.opt("name");
+            bikes = (Integer) jsonObject.opt("bikes");
+            slots = (Integer) jsonObject.opt("slots");
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(time);
+            dest.writeInt(bikes);
+            dest.writeInt(slots);
+        }
+
+        public static final Parcelable.Creator<Stat> CREATOR = new Parcelable.Creator<Stat>() {
+            @Override
+            public Stat createFromParcel(Parcel source) {
+                return new Stat(source);
+            }
+
+            @Override
+            public Stat[] newArray(int size) {
+                return new Stat[size];
+            }
+        };
+    }
 }

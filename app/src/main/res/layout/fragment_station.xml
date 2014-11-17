@@ -58,7 +58,7 @@
             android:layout_alignBaseline="@+id/slots_text_view"
             android:layout_alignLeft="@+id/bikes_label_text_view" />
 
-        <org.paoloconte.smoothchart.SmoothLineChart
+        <mx.softux.ecobike.StatsLineChart
             android:id="@+id/bikes_line_chart"
             android:layout_width="match_parent"
             android:layout_height="@dimen/map_height"

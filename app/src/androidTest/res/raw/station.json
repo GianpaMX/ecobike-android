@@ -6,5 +6,107 @@
     "longitude": -99.1679689
   },
   "bikes": 12,
-  "slots": 8
+  "slots": 8,
+  "stats": [
+    {
+      "time": "05:00:00",
+      "bikes": 20,
+      "slots": 0
+    },
+    {
+      "time": "06:00:00",
+      "bikes": 19,
+      "slots": 1
+    },
+    {
+      "time": "07:00:00",
+      "bikes": 18,
+      "slots": 2
+    },
+    {
+      "time": "08:00:00",
+      "bikes": 15,
+      "slots": 5
+    },
+    {
+      "time": "09:00:00",
+      "bikes": 1,
+      "slots": 19
+    },
+    {
+      "time": "10:00:00",
+      "bikes": 1,
+      "slots": 19
+    },
+    {
+      "time": "11:00:00",
+      "bikes": 2,
+      "slots": 18
+    },
+    {
+      "time": "12:00:00",
+      "bikes": 10,
+      "slots": 10
+    },
+    {
+      "time": "13:00:00",
+      "bikes": 9,
+      "slots": 11
+    },
+    {
+      "time": "14:00:00",
+      "bikes": 8,
+      "slots": 12
+    },
+    {
+      "time": "15:00:00",
+      "bikes": 9,
+      "slots": 11
+    },
+    {
+      "time": "16:00:00",
+      "bikes": 14,
+      "slots": 6
+    },
+    {
+      "time": "17:00:00",
+      "bikes": 20,
+      "slots": 0
+    },
+    {
+      "time": "18:00:00",
+      "bikes": 15,
+      "slots": 5
+    },
+    {
+      "time": "19:00:00",
+      "bikes": 5,
+      "slots": 15
+    },
+    {
+      "time": "20:00:00",
+      "bikes": 0,
+      "slots": 20
+    },
+    {
+      "time": "21:00:00",
+      "bikes": 2,
+      "slots": 18
+    },
+    {
+      "time": "22:00:00",
+      "bikes": 3,
+      "slots": 17
+    },
+    {
+      "time": "23:00:00",
+      "bikes": 4,
+      "slots": 16
+    },
+    {
+      "time": "24:00:00",
+      "bikes": 7,
+      "slots": 13
+    }
+  ]
 }

@@ -1,7 +1,6 @@
 package mx.softux.ecobike;
 
 
-import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,11 +11,9 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 
-import org.paoloconte.smoothchart.SmoothLineChart;
-
 public class StationFragment extends Fragment {
     private StationModel station;
-    private SmoothLineChart bikesLineChart;
+    private StatsLineChart bikesLineChart;
     private NetworkImageView mapImageView;
     private TextView bikes;
     private TextView slots;
@@ -45,7 +42,7 @@ public class StationFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        bikesLineChart = (SmoothLineChart) view.findViewById(R.id.bikes_line_chart);
+        bikesLineChart = (StatsLineChart) view.findViewById(R.id.bikes_line_chart);
         mapImageView = (NetworkImageView) view.findViewById(R.id.map_image_view);
         bikes = (TextView) view.findViewById(R.id.bikes_text_view);
         slots = (TextView) view.findViewById(R.id.slots_text_view);
@@ -69,16 +66,7 @@ public class StationFragment extends Fragment {
             bikes.setText(String.valueOf(station.bikes));
             slots.setText(String.valueOf(station.slots));
 
-            bikesLineChart.setData(new PointF[]{
-                    new PointF(15, 39), // {x, y}
-                    new PointF(20, 21),
-                    new PointF(28, 9),
-                    new PointF(37, 21),
-                    new PointF(40, 25),
-                    new PointF(50, 31),
-                    new PointF(62, 24),
-                    new PointF(80, 28)
-            });
+            bikesLineChart.setData(station.stats);
         }
     }
 
