@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.os.Parcelable;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 public class ApiService extends NetworkService {
     private static final String TAG = ApiService.class.getSimpleName();
 
+    private static final String API_URL = "http://192.168.56.1:3000";
     private static final int SECOND = 1000;
     private static final int TIMEOUT = 5 * SECOND;
 
@@ -23,6 +25,35 @@ public class ApiService extends NetworkService {
     private Runnable idleCountertask = null;
 
     private final IBinder binder = new Binder();
+
+
+    public Integer requestStation(int number) {
+        return requestGet(API_URL + "/station", null, new ResponseParcelable() {
+            @Override
+            public Parcelable newInstance(JSONObject jsonObject) {
+                return new StationModel(jsonObject);
+            }
+        });
+    }
+
+    public Integer requestStationMonitor(StationModel station, String regId) {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("regId", regId);
+        } catch (JSONException e) {
+            Log.e(TAG, "jsonObject.put");
+            return null;
+        }
+
+        String path = String.format("/station/%1$d/monitor", station.number);
+        return requestPost(API_URL + path, jsonObject, new ResponseParcelable() {
+            @Override
+            public Parcelable newInstance(JSONObject jsonObject) {
+                return null;
+            }
+        });
+    }
 
     @Override
     public void onCreate() {
@@ -38,15 +69,6 @@ public class ApiService extends NetworkService {
             idleCountertask = null;
         }
         Log.d(TAG, "onDestroy");
-    }
-
-    public Integer requestStation(int number) {
-        return requestGet("http://192.168.56.1:3000/station", null, new ResponseParcelable() {
-            @Override
-            public Parcelable newInstance(JSONObject jsonObject) {
-                return new StationModel(jsonObject);
-            }
-        });
     }
 
     @Override

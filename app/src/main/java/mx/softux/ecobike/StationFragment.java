@@ -9,8 +9,10 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -23,6 +25,19 @@ public class StationFragment extends Fragment {
     private TextView updateTime;
 
     private Handler updateTimeHandler = new Handler();
+    private Button requestMonitorButton;
+
+    public void onMonitorRequestResponse(boolean ok, String text) {
+        if(ok) {
+            Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public static interface StationFragmentHostActivity {
+        public void requestStationMonitor(StationModel station);
+    }
 
     public StationFragment() {
         // Required empty public constructor
@@ -54,6 +69,8 @@ public class StationFragment extends Fragment {
         slots = (TextView) view.findViewById(R.id.slots_text_view);
         updateTime = (TextView) view.findViewById(R.id.update_time_text_view);
 
+        requestMonitorButton = (Button) view.findViewById(R.id.request_monitor_button);
+
         updateView();
     }
 
@@ -82,6 +99,15 @@ public class StationFragment extends Fragment {
 
             updateTimeHandler.removeCallbacks(updateTimeTask);
             updateTimeHandler.postDelayed(updateTimeTask, 1000);
+
+            requestMonitorButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(getActivity() instanceof StationFragmentHostActivity) {
+                        ((StationFragmentHostActivity) getActivity()).requestStationMonitor(station);
+                    }
+                }
+            });
         } else {
             getView().findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
             getView().findViewById(R.id.layout).setVisibility(View.GONE);

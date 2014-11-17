@@ -36,7 +36,7 @@ public class GcmRegisterIntentService extends IntentService {
         super.onCreate();
         Log.d(TAG, "onCreate");
 
-        if (checkPlayServices()) {
+        if (checkPlayServices(this)) {
             gcm = GoogleCloudMessaging.getInstance(this);
             regId = getRegistrationId(this);
         } else {
@@ -62,8 +62,8 @@ public class GcmRegisterIntentService extends IntentService {
         }
     }
 
-    private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+    public static boolean checkPlayServices(Context context) {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
         if (resultCode != ConnectionResult.SUCCESS) {
             Log.i(TAG, "This device is not supported.");
             return false;
@@ -79,7 +79,7 @@ public class GcmRegisterIntentService extends IntentService {
      * @return registration ID, or empty string if there is no existing
      * registration ID.
      */
-    private String getRegistrationId(Context context) {
+    public static String getRegistrationId(Context context) {
         final SharedPreferences prefs = getGCMPreferences(context);
         String registrationId = prefs.getString(PROPERTY_REG_ID, "");
         if (registrationId.isEmpty()) {
@@ -101,8 +101,8 @@ public class GcmRegisterIntentService extends IntentService {
     /**
      * @return Application's {@code SharedPreferences}.
      */
-    private SharedPreferences getGCMPreferences(Context context) {
-        return getSharedPreferences(GcmRegisterIntentService.class.getSimpleName(), Context.MODE_PRIVATE);
+    private static SharedPreferences getGCMPreferences(Context context) {
+        return context.getSharedPreferences(GcmRegisterIntentService.class.getSimpleName(), Context.MODE_PRIVATE);
     }
 
     /**

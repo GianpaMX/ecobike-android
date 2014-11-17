@@ -81,6 +81,14 @@
                 android:layout_alignRight="@+id/map_image_view"
                 android:layout_margin="@dimen/small_margin" />
 
+            <Button
+                android:id="@+id/request_monitor_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Monitor"
+                android:layout_below="@+id/map_image_view"
+                android:layout_alignLeft="@+id/map_image_view" />
+
             <mx.softux.ecobike.StatsLineChart
                 android:id="@+id/bikes_line_chart"
                 android:layout_width="match_parent"

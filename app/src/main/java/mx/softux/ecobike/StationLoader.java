@@ -51,8 +51,8 @@ public class StationLoader extends Loader<StationModel> {
     }
 
     @Override
-    protected boolean onCancelLoad () {
-        if(requestId == null)
+    protected boolean onCancelLoad() {
+        if (requestId == null)
             return false;
 
         apiService.cancelRequest(requestId);
@@ -82,8 +82,8 @@ public class StationLoader extends Loader<StationModel> {
     private BroadcastReceiver stationBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getIntExtra(P.NetwrokService.REQUEST_ID, 0) == requestId) {
-                if(isAbandoned()) return;
+            if (requestId != null && intent.getIntExtra(P.NetwrokService.REQUEST_ID, 0) == requestId) {
+                if (isAbandoned()) return;
 
                 NetworkService.Response response = apiService.getResponse(requestId);
                 if (response.getStatus() != NetworkService.Response.OK) {
