@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.android.volley.toolbox.NetworkImageView;
 
 import org.paoloconte.smoothchart.SmoothLineChart;
 
@@ -121,11 +121,12 @@ public class StationFragment extends Fragment {
 
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            ImageView imageView = new ImageView(getActivity());
+            NetworkImageView imageView = new NetworkImageView(getActivity());
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             String mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=%1$f,%2$f&zoom=%3$d&size=%4$dx%5$d";
             mapUrl = String.format(mapUrl, station.location.x, station.location.y, 17, 800, 400);
-            Picasso.with(getActivity()).load(mapUrl).into(imageView);
+            imageView.setImageUrl(mapUrl, ((NetworkService.HostInterface) getActivity()).getNetworkService().getImageLoader());
             return imageView;
         }
     }

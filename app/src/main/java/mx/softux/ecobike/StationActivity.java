@@ -16,7 +16,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 
-public class StationActivity extends ActionBarActivity {
+public class StationActivity extends ActionBarActivity implements NetworkService.HostInterface {
     private ApiService apiService = null;
     private LocalBroadcastManager broadcastManager = null;
     private StationModel station = null;
@@ -142,5 +142,10 @@ public class StationActivity extends ActionBarActivity {
 
         stationRequestId = null;
         updateFragmentStation((StationModel) response.getParcelable());
+    }
+
+    @Override
+    public NetworkService getNetworkService() {
+        return apiService;
     }
 }
