@@ -69,6 +69,10 @@ public class StationActivity extends ActionBarActivity implements StationFragmen
     protected void onStop() {
         super.onStop();
 
+        if(apiService != null) {
+            unbindService(apiServiceConnection);
+        }
+
         if (requestStationMonitorReceiver != null) {
             broadcastManager.unregisterReceiver(requestStationMonitorReceiver);
         }

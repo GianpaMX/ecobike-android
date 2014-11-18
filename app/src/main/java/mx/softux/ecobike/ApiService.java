@@ -17,7 +17,7 @@ import org.json.JSONObject;
 public class ApiService extends NetworkService {
     private static final String TAG = ApiService.class.getSimpleName();
 
-    private static final String API_URL = "http://192.168.56.1:3000";
+    private static final String API_URL = "http://192.168.0.10:3000";
     private static final int SECOND = 1000;
     private static final int TIMEOUT = 5 * SECOND;
 
