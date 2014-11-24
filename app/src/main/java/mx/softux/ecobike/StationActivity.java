@@ -1,21 +1,21 @@
 package mx.softux.ecobike;
 
-import android.app.LoaderManager;
+
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-
 
 public class StationActivity extends ActionBarActivity implements StationFragment.StationFragmentHostActivity, LoaderManager.LoaderCallbacks<StationModel> {
     private ApiService apiService = null;
@@ -44,7 +44,7 @@ public class StationActivity extends ActionBarActivity implements StationFragmen
             }
         }
 
-        getLoaderManager().initLoader(0, null, this);
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class StationActivity extends ActionBarActivity implements StationFragmen
 
     @Override
     public Loader<StationModel> onCreateLoader(int id, Bundle args) {
-        return new StationLoader(this, getIntent().getIntExtra(P.Station.STATION_NUMBER, 0));
+        return new StationLoader(this, getIntent().getIntExtra(P.Station.STATION_NUMBER, 1));
     }
 
     @Override

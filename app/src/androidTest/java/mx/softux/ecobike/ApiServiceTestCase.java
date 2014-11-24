@@ -60,15 +60,15 @@ public class ApiServiceTestCase extends ServiceTestCase<MockApiService> {
         public OnResponseListener onResponseListener = null;
 
         public static interface OnResponseListener {
-            public void onResponse(int requestId);
-            public NetworkService.Response getResponse();
+            public void onResponse(Model model);
+            public Model getResponse();
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
             synchronized (lock) {
                 if(onResponseListener != null) {
-                    onResponseListener.onResponse(intent.getIntExtra(P.NetwrokService.REQUEST_ID, 0));
+                    onResponseListener.onResponse((StationModel) intent.getExtras().getParcelable(P.Station.STATION));
                 }
 
                 received = true;
@@ -92,7 +92,7 @@ public class ApiServiceTestCase extends ServiceTestCase<MockApiService> {
         Receiver receiver = new Receiver();
         broadcastManager.registerReceiver(receiver, new IntentFilter(NetworkService.RESPONSE));
 
-        Integer id = apiService.request(Request.Method.GET, "", null, new NetworkService.ResponseParcelable() {
+        apiService.request(Request.Method.GET, "", null, new NetworkService.ResponseParcelable() {
             @Override
             public Parcelable newInstance(JSONObject jsonObject) {
                 return new Parcelable() {
@@ -115,27 +115,27 @@ public class ApiServiceTestCase extends ServiceTestCase<MockApiService> {
 
     public void testStationRequest() throws InterruptedException, TimeoutException {
         Receiver receiver = new Receiver();
-        broadcastManager.registerReceiver(receiver, new IntentFilter(NetworkService.RESPONSE));
+        broadcastManager.registerReceiver(receiver, new IntentFilter(StationModel.ACTION));
 
-        Integer id = apiService.requestStation(1);
+        apiService.requestStation(1);
         receiver.onResponseListener = new Receiver.OnResponseListener() {
-            private NetworkService.Response response;
+            private StationModel response;
 
             @Override
-            public void onResponse(int requestId) {
-                response = apiService.getResponse(requestId);
+            public void onResponse(Model model) {
+                response = (StationModel) model;
             }
 
             @Override
-            public NetworkService.Response getResponse() {
+            public Model getResponse() {
                 return response;
             }
         };
         receiver.waitUpTo(10 * SECOND);
         broadcastManager.unregisterReceiver(receiver);
 
-        assert(receiver.onResponseListener.getResponse().getParcelable() instanceof StationModel);
-        StationModel station = (StationModel) receiver.onResponseListener.getResponse().getParcelable();
+        assert(receiver.onResponseListener.getResponse() instanceof StationModel);
+        StationModel station = (StationModel) receiver.onResponseListener.getResponse();
         assertEquals((int) station.number, 1);
     }
 }

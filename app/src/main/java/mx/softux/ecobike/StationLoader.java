@@ -5,11 +5,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 /**
  * Created by gianpa on 11/17/14.
@@ -30,71 +29,71 @@ public class StationLoader extends Loader<StationModel> {
             Intent apiService = new Intent(context, ApiService.class);
             context.startService(apiService);
         }
-
-        broadcastManager = LocalBroadcastManager.getInstance(context);
     }
 
     @Override
     protected void onStartLoading() {
-        super.onStartLoading();
+        if(station != null) {
+            deliverResult(station);
+        }
 
-        broadcastManager.registerReceiver(stationBroadcastReceiver, new IntentFilter(NetworkService.RESPONSE));
+        broadcastManager = LocalBroadcastManager.getInstance(getContext());
+
+        broadcastManager.registerReceiver(stationBroadcastReceiver, new IntentFilter(Model.Station.READY));
+        broadcastManager.registerReceiver(stationBroadcastReceiver, new IntentFilter(Model.Station.UPDATE));
 
         Intent networkService = new Intent(getContext(), ApiService.class);
         getContext().bindService(networkService, apiServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
-    protected void onAbandon() {
-        super.onAbandon();
-        cancelLoad();
-    }
-
-    @Override
-    protected boolean onCancelLoad() {
-        if (requestId == null)
-            return false;
-
-        apiService.cancelRequest(requestId);
-        requestId = null;
-
-        return true;
-    }
-
-    @Override
-    protected void onStopLoading() {
-        super.onStopLoading();
+    protected void onReset() {
         broadcastManager.unregisterReceiver(stationBroadcastReceiver);
 
-        cancelLoad();
+        cancelRequest();
 
         if (apiService != null)
             getContext().unbindService(apiServiceConnection);
+
+        broadcastManager = null;
+        station = null;
+    }
+
+    private void cancelRequest() {
+        if (apiService != null && requestId != null) {
+            apiService.cancelRequest(requestId);
+            requestId = null;
+        }
     }
 
     @Override
     protected void onForceLoad() {
-        super.onForceLoad();
-        cancelLoad();
-        requestId = apiService.requestStation(number);
+        cancelRequest();
+        if (apiService != null)
+            requestId = apiService.requestStation(number);
     }
 
     private BroadcastReceiver stationBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (requestId != null && intent.getIntExtra(P.NetwrokService.REQUEST_ID, 0) == requestId) {
-                if (isAbandoned()) return;
+            requestId = null;
 
-                NetworkService.Response response = apiService.getResponse(requestId);
-                if (response.getStatus() != NetworkService.Response.OK) {
-                    Toast.makeText(getContext(), "Error", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                station = (StationModel) response.getParcelable();
-
-                requestId = null;
-                deliverResult(station);
+            if (isAbandoned() || number != intent.getExtras().getInt(P.Station.STATION_NUMBER)) {
+                return;
             }
+
+            if (intent.getAction() == Model.Station.READY) {
+                station = intent.getExtras().getParcelable(P.Station.STATION);
+            } else if (intent.getAction() == Model.Station.UPDATE && station != null) {
+                station = new StationModel(station);
+                station.bikes = intent.getExtras().getInt(P.Station.STATION_BIKES);
+                station.slots = intent.getExtras().getInt(P.Station.STATION_SLOTS);
+                station.updateTime = intent.getExtras().getLong(P.Station.STATION_UPDATE_TIME);
+            } else {
+                return;
+            }
+
+            if (isStarted() && station != null) deliverResult(station);
         }
     };
 
@@ -103,7 +102,9 @@ public class StationLoader extends Loader<StationModel> {
         public void onServiceConnected(ComponentName name, IBinder service) {
             ApiService.Binder binder = (ApiService.Binder) service;
             apiService = binder.getApiService();
-            requestId = apiService.requestStation(number);
+
+            if(station == null)
+                requestId = apiService.requestStation(number);
         }
 
         @Override
@@ -111,11 +112,4 @@ public class StationLoader extends Loader<StationModel> {
             apiService = null;
         }
     };
-
-    @Override
-    protected void onReset() {
-        super.onReset();
-        broadcastManager = null;
-        station = null;
-    }
 }

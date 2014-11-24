@@ -22,13 +22,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class NetworkService extends Service {
     private static final String TAG = NetworkService.class.getSimpleName();
 
-    public static final String RESPONSE = "RESPONSE";
+    protected static final String RESPONSE = "RESPONSE";
 
     private RequestQueue queue;
 
     private Map<Integer, Response> responses = new HashMap<Integer, Response>();
     private AtomicInteger sequence = new AtomicInteger();
-    private LocalBroadcastManager broadcastManager;
+    protected LocalBroadcastManager broadcastManager;
 
     @Override
     public void onCreate() {
@@ -37,19 +37,19 @@ public abstract class NetworkService extends Service {
         broadcastManager = LocalBroadcastManager.getInstance(this);
     }
 
-    public RequestQueue newRequestQueue(Context context) {
+    protected RequestQueue newRequestQueue(Context context) {
         return Volley.newRequestQueue(this);
     }
 
-    public Integer requestGet(String url, JSONObject jsonRequest, final ResponseParcelable responseParcelable) {
+    protected Integer requestGet(String url, JSONObject jsonRequest, final ResponseParcelable responseParcelable) {
         return request(Request.Method.GET, url, jsonRequest, responseParcelable);
     }
 
-    public Integer requestPost(String url, JSONObject jsonObject, final ResponseParcelable responseParcelable) {
+    protected Integer requestPost(String url, JSONObject jsonObject, final ResponseParcelable responseParcelable) {
         return request(Request.Method.POST, url, jsonObject, responseParcelable);
     }
 
-    public Integer request(int method, String url, JSONObject jsonRequest, final ResponseParcelable responseParcelable) {
+    protected Integer request(int method, String url, JSONObject jsonRequest, final ResponseParcelable responseParcelable) {
         final Integer i = sequence.incrementAndGet();
 
         JsonObjectRequest request = new JsonObjectRequest(method, url, jsonRequest, new com.android.volley.Response.Listener<JSONObject>() {
@@ -80,7 +80,7 @@ public abstract class NetworkService extends Service {
         broadcastManager.sendBroadcast(intent);
     }
 
-    public Response getResponse(Integer requestId) {
+    protected Response getResponse(Integer requestId) {
         if (!responses.containsKey(requestId)) {
             return new Response();
         }
@@ -93,7 +93,7 @@ public abstract class NetworkService extends Service {
         queue.cancelAll(requestId);
     }
 
-    public static class Response {
+    protected static class Response {
         public static final int UNKNOWN = 0;
         public static final int OK = 1;
         public static final int ERROR = 2;

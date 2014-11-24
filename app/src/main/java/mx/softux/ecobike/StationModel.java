@@ -60,6 +60,25 @@ public class StationModel extends Model {
         updateTime = (Long) jsonObject.opt("updateTime");
     }
 
+    public StationModel(StationModel station) {
+        copyFrom(station);
+    }
+
+    private void copyFrom(StationModel station) {
+        number = station.number;
+        name = station.name;
+        location = station.location;
+        bikes = station.bikes;
+        slots = station.slots;
+        if (station.stats != null) {
+            stats = new Stat[station.stats.length];
+            for (int i = 0; i < station.stats.length; i++) {
+                stats[i] = station.stats[i];
+            }
+        }
+        updateTime = station.updateTime;
+    }
+
     @Override
     public int describeContents() {
         return 0;
