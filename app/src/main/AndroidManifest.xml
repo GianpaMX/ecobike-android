@@ -15,13 +15,13 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <permission
         android:name="mx.softux.ecobike.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="mx.softux.ecobike.permission.C2D_MESSAGE" />
 
     <application
@@ -37,34 +37,37 @@
             android:value="AIzaSyAuuY5b0nzNsyv_5wKBfLWACiUwfr89Mv4" />
 
         <activity
-            android:name="mx.softux.ecobike.StationActivity"
-            android:label="@string/title_activity_station">
+            android:name="mx.softux.ecobike.StationsMapActivity"
+            android:label="@string/title_activity_stations_map">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="mx.softux.ecobike.StationActivity"
+            android:label="@string/title_activity_station"/>
 
         <service
             android:name="mx.softux.ecobike.ApiService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".GcmRegisterIntentService"
+            android:name="mx.softux.ecobike.GcmRegisterIntentService"
             android:enabled="true"
             android:exported="false" />
-
         <service
-            android:name=".GcmIntentService"
+            android:name="mx.softux.ecobike.GcmIntentService"
             android:enabled="true"
             android:exported="false" />
 
         <receiver
-            android:name=".GcmBroadcastReceiver"
+            android:name="mx.softux.ecobike.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
                 <category android:name="mx.softux.ecobike" />
             </intent-filter>
         </receiver>
