@@ -1,113 +1,146 @@
 package mx.softux.ecobike;
 
-import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ListView;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 
 
-public class StationsMapActivity extends ActionBarActivity {
+public class StationsMapActivity extends ActionBarActivity implements ObservableScrollView.Callbacks {
+    private static final String TAG = StationsMapActivity.class.getSimpleName();
 
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private ActionBarDrawerToggle mDrawerToggle;
+    private static final float PHOTO_ASPECT_RATIO = 1.7777777f;
 
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
+    private Toolbar mActionBarToolbar;
+    private float mMaxHeaderElevation;
+
+    private ObservableScrollView mScrollView;
+    private View mHeaderBox;
+    private View mDetailsContainer;
+    private View mPhotoViewContainer;
+
+    private int mPhotoHeightPixels;
+    private int mHeaderHeightPixels;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stations_map);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        final Toolbar toolbar = getActionBarToolbar();
+        toolbar.setNavigationIcon(R.drawable.ic_up);
 
-        mTitle = mDrawerTitle = getTitle();
+        mMaxHeaderElevation = getResources().getDimensionPixelSize(R.dimen.session_detail_max_header_elevation);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, (Toolbar) findViewById(R.id.toolbar), R.string.app_name, R.string.title_activity_stations_map) {
-
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(mTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-
-        // Set the drawer toggle as the DrawerListener
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_stations_map, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
+        mScrollView = (ObservableScrollView) findViewById(R.id.scroll_view);
+        mScrollView.addCallbacks(this);
+        ViewTreeObserver vto = mScrollView.getViewTreeObserver();
+        if (vto.isAlive()) {
+            vto.addOnGlobalLayoutListener(mGlobalLayoutListener);
         }
 
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        mDetailsContainer = findViewById(R.id.details_container);
+        mHeaderBox = findViewById(R.id.header_session);
+        mPhotoViewContainer = findViewById(R.id.session_photo_container);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        ImageView transparentImageView = (ImageView) findViewById(R.id.transparent_image);
+        transparentImageView.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Rect bound = new Rect();
+                mPhotoViewContainer.getGlobalVisibleRect(bound);
+                if (event.getAction() != MotionEvent.ACTION_UP && bound.contains((int) event.getX(), (int) event.getY())) {
+                    mScrollView.requestDisallowInterceptTouchEvent(true);
+                    return false;
+                } else {
+                    mScrollView.requestDisallowInterceptTouchEvent(false);
+                    return true;
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mScrollView == null) {
+            return;
         }
 
-        return super.onOptionsItemSelected(item);
+        ViewTreeObserver vto = mScrollView.getViewTreeObserver();
+        if (vto.isAlive()) {
+            vto.removeGlobalOnLayoutListener(mGlobalLayoutListener);
+        }
     }
 
-    /* Called whenever we call invalidateOptionsMenu() */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        return super.onPrepareOptionsMenu(menu);
+    protected Toolbar getActionBarToolbar() {
+        if (mActionBarToolbar == null) {
+            mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+            if (mActionBarToolbar != null) {
+                setSupportActionBar(mActionBarToolbar);
+            }
+        }
+        return mActionBarToolbar;
+    }
+
+    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
+            = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            recomputePhotoAndScrollingMetrics();
+        }
+    };
+
+
+    private void recomputePhotoAndScrollingMetrics() {
+        mHeaderHeightPixels = mHeaderBox.getHeight();
+
+        mPhotoHeightPixels = mScrollView.getHeight() - mHeaderHeightPixels;
+//        mPhotoHeightPixels = (int) (mPhotoViewContainer.getMeasuredWidth() / PHOTO_ASPECT_RATIO);
+
+        ViewGroup.LayoutParams lp;
+        lp = mPhotoViewContainer.getLayoutParams();
+        if (lp.height != mPhotoHeightPixels) {
+            lp.height = mPhotoHeightPixels;
+            mPhotoViewContainer.setLayoutParams(lp);
+        }
+
+        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)
+                mDetailsContainer.getLayoutParams();
+        if (mlp.topMargin != mHeaderHeightPixels + mPhotoHeightPixels) {
+            mlp.topMargin = mHeaderHeightPixels + mPhotoHeightPixels;
+            mDetailsContainer.setLayoutParams(mlp);
+        }
+
+        onScrollChanged(0, 0); // trigger scroll handling
     }
 
     @Override
-    public void setTitle(CharSequence title) {
-        mTitle = title;
-        getSupportActionBar().setTitle(mTitle);
-    }
+    public void onScrollChanged(int deltaX, int deltaY) {
+        // Reposition the header bar -- it's normally anchored to the top of the content,
+        // but locks to the top of the screen on scroll
+        int scrollY = mScrollView.getScrollY();
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
+        float newTop = Math.max(mPhotoHeightPixels, scrollY);
+        mHeaderBox.setTranslationY(newTop);
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        float gapFillProgress = 1;
+        if (mPhotoHeightPixels != 0) {
+            gapFillProgress = Math.min(Math.max(UIUtils.getProgress(scrollY, 0, mPhotoHeightPixels), 0), 1);
+        }
+
+        ViewCompat.setElevation(mHeaderBox, gapFillProgress * mMaxHeaderElevation);
+
+        // Move background photo (parallax effect)
+        mPhotoViewContainer.setTranslationY(scrollY * 0.5f);
     }
 
 }

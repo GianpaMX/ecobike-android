@@ -10,4 +10,16 @@
     <string name="title_activity_stations_map">Stations</string>
     <string name="hello_world">Hello world!</string>
 
+    <string name="add_to_schedule">Add to schedule</string>
+
+    <string name="lorem_ipsum">
+         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent commodo magna id facilisis tincidunt. In tristique tempus leo, vitae iaculis enim efficitur sit amet. Donec ultrices varius vulputate. Nunc vel tortor turpis. Fusce quis urna faucibus, sodales enim ut, fringilla nulla. Cras et urna ultrices, ultrices nibh quis, interdum lorem. Cras nec ante nec lacus blandit cursus. Maecenas magna purus, convallis a augue sit amet, lobortis maximus tortor. Suspendisse a pellentesque ex, id mollis leo.
+
+Nam faucibus euismod felis non lobortis. Pellentesque ac eros faucibus ligula condimentum mollis. Pellentesque tempus laoreet nisi nec imperdiet. Nulla rutrum nulla eget justo finibus, congue condimentum quam ultricies. Quisque et nulla justo. Quisque sit amet lacinia tellus, in semper ex. Duis vestibulum interdum elit a rutrum. Ut lacinia ante id diam convallis viverra.
+
+Aliquam eros ex, interdum non diam nec, ultrices eleifend arcu. Maecenas sed fermentum mi, eget maximus ex. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Morbi sed metus vel diam aliquam malesuada. Praesent at metus nisi. Nunc sodales accumsan felis, eu viverra ligula malesuada et. Morbi et nisl malesuada enim mattis euismod. Fusce nec semper lacus. Vestibulum sed enim ut dui pharetra dapibus eget ut orci. Aenean massa diam, fringilla eget tellus gravida, luctus scelerisque diam. Etiam tempus id lacus in tincidunt. Phasellus ultricies, augue at sagittis rhoncus, mi mauris malesuada eros, nec maximus ipsum diam in mi. Phasellus vulputate aliquet aliquam. Pellentesque aliquet quam tempor nunc commodo, ut commodo elit tincidunt.
+
+Duis feugiat metus vel pretium ultrices. Sed maximus, eros sed vestibulum venenatis, sem enim dapibus felis, quis auctor leo sapien at tellus. Cras consectetur lorem sed lectus faucibus, sed suscipit metus sagittis. Vivamus eleifend faucibus ligula. Maecenas risus sem, dictum a quam sit amet, volutpat efficitur risus. Integer imperdiet nibh in mauris mattis, non rhoncus mauris sagittis. Cras auctor ex nec mi cursus, vel hendrerit urna tempus. Aliquam finibus nulla sit amet mauris rutrum consectetur. Cras suscipit accumsan orci in sollicitudin. Aenean vitae nunc sed massa placerat viverra eget ut nibh. Phasellus ut magna eu velit rhoncus laoreet vitae eget nisi. Fusce quis lorem risus. Aliquam erat volutpat. Nulla nec tortor sed lorem ornare porttitor. Integer at hendrerit risus.
+    </string>
+
 </resources>

@@ -5,6 +5,9 @@
     <color name="accent">@color/md_pink_A200</color>
 
 
+    <color name="body_text_1">#de000000</color>
+    <color name="body_text_2">#8a000000</color>
+
     <!-- purples -->
     <color name="md_purple_50">#f3e5f5</color>
     <color name="md_purple_100">#e1bee7</color>
