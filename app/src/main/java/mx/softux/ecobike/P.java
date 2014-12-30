@@ -4,6 +4,8 @@ package mx.softux.ecobike;
  * Created by gianpa on 11/14/14.
  */
 public class P {
+    public static final String BROADCAST_SOURCE = "BROADCAST_SOURCE";
+
     public static class Station {
         public static final String STATION = "STATION";
         public static final String STATION_NUMBER = "STATION_NUMBER";

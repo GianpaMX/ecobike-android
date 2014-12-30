@@ -58,6 +58,10 @@
             android:enabled="true"
             android:exported="false" />
         <service
+            android:name=".CacheService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
             android:name="mx.softux.ecobike.GcmRegisterIntentService"
             android:enabled="true"
             android:exported="false" />

@@ -8,12 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 /**
  * Created by gianpa on 12/26/14.
  */
-public class StationList extends ArrayList<StationModel> implements Parcelable {
+public class StationList extends ModelList<StationModel> implements Parcelable {
     private static final String TAG = StationList.class.getSimpleName();
 
     public StationList() {
@@ -28,14 +26,7 @@ public class StationList extends ArrayList<StationModel> implements Parcelable {
     }
 
     public StationList(JSONObject jsonObject) {
-        try {
-            JSONArray jsonArray = jsonObject.getJSONArray("stations");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                this.add(new StationModel(jsonArray.getJSONObject(i)));
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "stations", e);
-        }
+        copyFrom(jsonObject);
     }
 
     @Override
@@ -58,5 +49,36 @@ public class StationList extends ArrayList<StationModel> implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeTypedList(this);
+    }
+
+    @Override
+    public void copyFrom(JSONObject jsonObject) {
+        try {
+            JSONArray jsonArray = jsonObject.getJSONArray("stations");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                this.add(new StationModel(jsonArray.getJSONObject(i)));
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "stations", e);
+        }
+    }
+
+    @Override
+    public JSONObject toJSONObject() {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            JSONArray stationsJsonArray = new JSONArray();
+            for (StationModel station : this) {
+                stationsJsonArray.put(station.toJSONObject());
+            }
+            jsonObject.put("stations", stationsJsonArray);
+        } catch (JSONException e) {
+            Log.e(TAG, "JSONObject.put", e);
+
+            return null;
+        }
+
+        return jsonObject;
     }
 }

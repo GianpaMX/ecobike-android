@@ -2,9 +2,11 @@ package mx.softux.ecobike;
 
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
@@ -31,6 +33,8 @@ public class ApiService extends NetworkService {
 
     private final IBinder binder = new Binder();
 
+    private CacheService cacheService;
+
     private Map<Integer, RequestType> requestTypes = new HashMap<Integer, RequestType>();
     private BroadcastReceiver responseReceiver = new BroadcastReceiver() {
         @Override
@@ -48,21 +52,20 @@ public class ApiService extends NetworkService {
 
             switch (requestTypes.get(requestId)) {
                 case STATION: {
-                        StationModel station = (StationModel) response.getParcelable();
-                        sendStationIntentBroadcast(station);
-                    }
-                    break;
+                    StationModel station = (StationModel) response.getParcelable();
+                    BroadcastManagerHelper.sendStation(station, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
+                }
+                break;
                 case STATION_LIST: {
-                        StationList stationList = (StationList) response.getParcelable();
-                        for (StationModel station : stationList) {
-                            sendStationIntentBroadcast(station);
-                        }
-                        Intent stationIntent = new Intent(Model.StationList.READY);
-                        stationIntent.putExtra(P.NetwrokService.REQUEST_ID, requestId);
-                        stationIntent.putExtra(P.StationList.STATION_LIST, (Parcelable) stationList);
-                        broadcastManager.sendBroadcast(stationIntent);
+                    StationList stationList = (StationList) response.getParcelable();
+                    if (cacheService != null)
+                        cacheService.saveStationList(stationList);
+                    for (StationModel station : stationList) {
+                        BroadcastManagerHelper.sendStation(station, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
                     }
-                    break;
+                    BroadcastManagerHelper.sendStationList(stationList, requestId, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
+                }
+                break;
                 default:
                     // Ignore
             }
@@ -70,13 +73,6 @@ public class ApiService extends NetworkService {
             requestTypes.remove(requestId);
         }
     };
-
-    private void sendStationIntentBroadcast(StationModel station) {
-        Intent stationIntent = new Intent(Model.Station.READY);
-        stationIntent.putExtra(P.Station.STATION, station);
-        stationIntent.putExtra(P.Station.STATION_NUMBER, station.number);
-        broadcastManager.sendBroadcast(stationIntent);
-    }
 
     public Integer requestStation(int number) {
         String url = String.format("%s/station/%d", API_URL, number);
@@ -121,6 +117,10 @@ public class ApiService extends NetworkService {
                 return new StationList(jsonObject);
             }
         });
+
+        if (cacheService != null)
+            cacheService.requestStationList(requestId);
+
         requestTypes.put(requestId, RequestType.STATION_LIST);
         return requestId;
     }
@@ -129,6 +129,9 @@ public class ApiService extends NetworkService {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
+
+        Intent cacheServiceIntent = new Intent(this, CacheService.class);
+        bindService(cacheServiceIntent, cacheServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -168,7 +171,11 @@ public class ApiService extends NetworkService {
                 idleHandler.postDelayed(this, SECOND);
                 Log.d(TAG, "time = " + timeout);
 
-                if ((timeout -= 1 * SECOND) <= 0) stopSelf();
+                if ((timeout -= 1 * SECOND) <= 0) {
+                    if (cacheService != null) unbindService(cacheServiceConnection);
+
+                    stopSelf();
+                }
             }
         };
 
@@ -203,4 +210,17 @@ public class ApiService extends NetworkService {
         STATION,
         STATION_LIST
     }
+
+    private ServiceConnection cacheServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            CacheService.Binder binder = (CacheService.Binder) service;
+            cacheService = binder.getCacheService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            cacheService = null;
+        }
+    };
 }

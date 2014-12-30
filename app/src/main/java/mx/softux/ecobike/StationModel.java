@@ -37,27 +37,7 @@ public class StationModel extends Model {
     }
 
     public StationModel(JSONObject jsonObject) {
-        number = (Integer) jsonObject.opt("number");
-        name = (String) jsonObject.opt("name");
-        try {
-            double x = jsonObject.getJSONObject("location").optDouble("latitude");
-            double y = jsonObject.getJSONObject("location").optDouble("longitude");
-            location = new PointF((float) x, (float) y);
-        } catch (JSONException e) {
-            Log.e(TAG, "location", e);
-        }
-        bikes = (Integer) jsonObject.opt("bikes");
-        slots = (Integer) jsonObject.opt("slots");
-        try {
-            JSONArray statsJSONArray = jsonObject.getJSONArray("stats");
-            stats = new Stat[statsJSONArray.length()];
-            for (int i = 0; i < statsJSONArray.length(); i++) {
-                stats[i] = new Stat(statsJSONArray.getJSONObject(i));
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "stats", e);
-        }
-        updateTime = (Long) jsonObject.opt("updateTime");
+        copyFrom(jsonObject);
     }
 
     public StationModel(StationModel station) {
@@ -107,6 +87,67 @@ public class StationModel extends Model {
         }
     };
 
+    @Override
+    public void copyFrom(JSONObject jsonObject) {
+        number = (Integer) jsonObject.opt("number");
+        name = (String) jsonObject.opt("name");
+        try {
+            double x = jsonObject.getJSONObject("location").optDouble("latitude");
+            double y = jsonObject.getJSONObject("location").optDouble("longitude");
+            location = new PointF((float) x, (float) y);
+        } catch (JSONException e) {
+            Log.e(TAG, "location", e);
+        }
+        bikes = (Integer) jsonObject.opt("bikes");
+        slots = (Integer) jsonObject.opt("slots");
+        try {
+            JSONArray statsJSONArray = jsonObject.getJSONArray("stats");
+            stats = new Stat[statsJSONArray.length()];
+            for (int i = 0; i < statsJSONArray.length(); i++) {
+                stats[i] = new Stat(statsJSONArray.getJSONObject(i));
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "stats", e);
+        }
+        updateTime = (Long) jsonObject.opt("updateTime");
+    }
+
+    @Override
+    public JSONObject toJSONObject() {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("number", number);
+            jsonObject.put("name", name);
+
+            JSONObject locationJsonObject = new JSONObject();
+            locationJsonObject.put("latitude", location.x);
+            locationJsonObject.put("longitude", location.y);
+            jsonObject.put("location", locationJsonObject);
+
+            jsonObject.put("bikes", bikes);
+            jsonObject.put("slots", slots);
+
+            JSONArray statsJsonArray = new JSONArray();
+            for(Stat stat : stats) {
+                JSONObject statJsonObject = new JSONObject();
+                statJsonObject.put("time", stat.time);
+                statJsonObject.put("bikes", stat.bikes);
+                statJsonObject.put("slots", stat.slots);
+                statsJsonArray.put(statJsonObject);
+            }
+            jsonObject.put("stats", statsJsonArray);
+
+            jsonObject.put("updateTime", updateTime);
+        } catch (JSONException e) {
+            Log.e(TAG, "JSONObject.put", e);
+
+            return null;
+        }
+
+        return jsonObject;
+    }
+
     public static class Stat implements Parcelable {
         public String time;
         public Integer bikes;
@@ -122,7 +163,7 @@ public class StationModel extends Model {
         }
 
         public Stat(JSONObject jsonObject) {
-            time = (String) jsonObject.opt("name");
+            time = (String) jsonObject.opt("time");
             bikes = (Integer) jsonObject.opt("bikes");
             slots = (Integer) jsonObject.opt("slots");
         }
