@@ -1,21 +1,13 @@
 package mx.softux.ecobike;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.os.IBinder;
-import android.support.v4.content.Loader;
-import android.support.v4.content.LocalBroadcastManager;
 
 /**
  * Created by gianpa on 11/17/14.
  */
-public class StationLoader extends Loader<StationModel> {
-    private ApiService apiService = null;
-    private LocalBroadcastManager broadcastManager = null;
+public class StationLoader extends ModelLoader<StationModel> {
     private StationModel station = null;
     private final int number;
     private Integer requestId;
@@ -24,53 +16,44 @@ public class StationLoader extends Loader<StationModel> {
         super(context);
 
         this.number = number;
-
-        if (!ApiService.isRunning(context)) {
-            Intent apiService = new Intent(context, ApiService.class);
-            context.startService(apiService);
-        }
     }
 
     @Override
     protected void onStartLoading() {
+        super.onStartLoading();
+
         if(station != null) {
             deliverResult(station);
         }
 
-        broadcastManager = LocalBroadcastManager.getInstance(getContext());
+        registerReceiver(stationBroadcastReceiver, Model.Station.READY);
+        registerReceiver(stationBroadcastReceiver, Model.Station.UPDATE);
+    }
 
-        broadcastManager.registerReceiver(stationBroadcastReceiver, new IntentFilter(Model.Station.READY));
-        broadcastManager.registerReceiver(stationBroadcastReceiver, new IntentFilter(Model.Station.UPDATE));
-
-        Intent networkService = new Intent(getContext(), ApiService.class);
-        getContext().bindService(networkService, apiServiceConnection, Context.BIND_AUTO_CREATE);
+    @Override
+    protected void onServiceConnected(ApiService apiService) {
+        if(station == null)
+            requestId = apiService.requestStation(number);
     }
 
     @Override
     protected void onReset() {
-        broadcastManager.unregisterReceiver(stationBroadcastReceiver);
+        unregisterReceiver(stationBroadcastReceiver);
+        cancelRequest(requestId);
 
-        cancelRequest();
-
-        if (apiService != null)
-            getContext().unbindService(apiServiceConnection);
-
-        broadcastManager = null;
         station = null;
-    }
 
-    private void cancelRequest() {
-        if (apiService != null && requestId != null) {
-            apiService.cancelRequest(requestId);
-            requestId = null;
-        }
+        super.onReset();
     }
 
     @Override
     protected void onForceLoad() {
-        cancelRequest();
+        cancelRequest(requestId);
+
         if (apiService != null)
             requestId = apiService.requestStation(number);
+
+        super.onForceLoad();
     }
 
     private BroadcastReceiver stationBroadcastReceiver = new BroadcastReceiver() {
@@ -97,19 +80,4 @@ public class StationLoader extends Loader<StationModel> {
         }
     };
 
-    private ServiceConnection apiServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            ApiService.Binder binder = (ApiService.Binder) service;
-            apiService = binder.getApiService();
-
-            if(station == null)
-                requestId = apiService.requestStation(number);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            apiService = null;
-        }
-    };
 }

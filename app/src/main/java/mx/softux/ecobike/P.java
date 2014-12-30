@@ -15,4 +15,8 @@ public class P {
     public static class NetwrokService {
         public static final String REQUEST_ID = "REQUEST_ID";
     }
+
+    public static class StationList {
+        public static final String STATION_LIST = "STATION_LIST";
+    }
 }

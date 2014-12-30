@@ -22,7 +22,7 @@ import java.util.Map;
 public class ApiService extends NetworkService {
     private static final String TAG = ApiService.class.getSimpleName();
 
-    private static final String API_URL = "http://192.168.0.3:3000";
+    private static final String API_URL = "http://192.168.56.1:3000";
     private static final int SECOND = 1000;
     private static final int TIMEOUT = 5 * SECOND;
 
@@ -47,12 +47,21 @@ public class ApiService extends NetworkService {
             }
 
             switch (requestTypes.get(requestId)) {
-                case STATION:
-                    Intent stationIntent = new Intent(Model.Station.READY);
-                    StationModel station = (StationModel) response.getParcelable();
-                    stationIntent.putExtra(P.Station.STATION, station);
-                    stationIntent.putExtra(P.Station.STATION_NUMBER, station.number);
-                    broadcastManager.sendBroadcast(stationIntent);
+                case STATION: {
+                        StationModel station = (StationModel) response.getParcelable();
+                        sendStationIntentBroadcast(station);
+                    }
+                    break;
+                case STATION_LIST: {
+                        StationList stationList = (StationList) response.getParcelable();
+                        for (StationModel station : stationList) {
+                            sendStationIntentBroadcast(station);
+                        }
+                        Intent stationIntent = new Intent(Model.StationList.READY);
+                        stationIntent.putExtra(P.NetwrokService.REQUEST_ID, requestId);
+                        stationIntent.putExtra(P.StationList.STATION_LIST, (Parcelable) stationList);
+                        broadcastManager.sendBroadcast(stationIntent);
+                    }
                     break;
                 default:
                     // Ignore
@@ -62,9 +71,18 @@ public class ApiService extends NetworkService {
         }
     };
 
+    private void sendStationIntentBroadcast(StationModel station) {
+        Intent stationIntent = new Intent(Model.Station.READY);
+        stationIntent.putExtra(P.Station.STATION, station);
+        stationIntent.putExtra(P.Station.STATION_NUMBER, station.number);
+        broadcastManager.sendBroadcast(stationIntent);
+    }
+
     public Integer requestStation(int number) {
+        String url = String.format("%s/station/%d", API_URL, number);
+
         broadcastManager.registerReceiver(responseReceiver, new IntentFilter(NetworkService.RESPONSE));
-        Integer requestId = requestGet(API_URL + "/station", null, new ResponseParcelable() {
+        Integer requestId = requestGet(url, null, new ResponseParcelable() {
             @Override
             public Parcelable newInstance(JSONObject jsonObject) {
                 return new StationModel(jsonObject);
@@ -75,8 +93,9 @@ public class ApiService extends NetworkService {
     }
 
     public Integer requestStationMonitor(StationModel station, String regId) {
-        JSONObject jsonObject = new JSONObject();
+        String url = String.format("%s/station/%1$d/monitor", API_URL, station.number);
 
+        JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("regId", regId);
         } catch (JSONException e) {
@@ -84,13 +103,26 @@ public class ApiService extends NetworkService {
             return null;
         }
 
-        String path = String.format("/station/%1$d/monitor", station.number);
-        return requestPost(API_URL + path, jsonObject, new ResponseParcelable() {
+        return requestPost(url, jsonObject, new ResponseParcelable() {
             @Override
             public Parcelable newInstance(JSONObject jsonObject) {
                 return null;
             }
         });
+    }
+
+    public Integer requestStationList() {
+        String url = String.format("%s/station", API_URL);
+
+        broadcastManager.registerReceiver(responseReceiver, new IntentFilter(NetworkService.RESPONSE));
+        Integer requestId = requestGet(url, null, new ResponseParcelable() {
+            @Override
+            public Parcelable newInstance(JSONObject jsonObject) {
+                return new StationList(jsonObject);
+            }
+        });
+        requestTypes.put(requestId, RequestType.STATION_LIST);
+        return requestId;
     }
 
     @Override
@@ -168,6 +200,7 @@ public class ApiService extends NetworkService {
     }
 
     private static enum RequestType {
-        STATION
+        STATION,
+        STATION_LIST
     }
 }

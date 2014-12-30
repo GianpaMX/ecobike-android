@@ -10,4 +10,8 @@ public abstract class Model implements Parcelable {
         public static final String READY = "STATION_READY";
         public static final String UPDATE = "STATION_UPDATE";
     }
+
+    public class StationList {
+        public static final String READY = "STATION_LIST_READY";
+    }
 }

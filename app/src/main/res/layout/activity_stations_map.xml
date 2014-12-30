@@ -18,11 +18,10 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/map_height">
 
-            <fragment
-                android:id="@+id/map"
+            <FrameLayout
+                android:id="@+id/stations_placeholder"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:name="com.google.android.gms.maps.SupportMapFragment" />
+                android:layout_height="match_parent" />
 
             <ImageView
                 android:id="@+id/transparent_image"

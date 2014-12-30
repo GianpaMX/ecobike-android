@@ -3,8 +3,9 @@ package mx.softux.ecobike;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,11 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 
-public class StationsMapActivity extends ActionBarActivity implements ObservableScrollView.Callbacks {
+public class StationsMapActivity extends StationsActivity implements ObservableScrollView.Callbacks {
     private static final String TAG = StationsMapActivity.class.getSimpleName();
 
     private static final float PHOTO_ASPECT_RATIO = 1.7777777f;
 
-    private Toolbar mActionBarToolbar;
     private float mMaxHeaderElevation;
 
     private ObservableScrollView mScrollView;
@@ -28,14 +28,13 @@ public class StationsMapActivity extends ActionBarActivity implements Observable
     private int mPhotoHeightPixels;
     private int mHeaderHeightPixels;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stations_map);
 
         final Toolbar toolbar = getActionBarToolbar();
-        toolbar.setNavigationIcon(R.drawable.ic_up);
+//        toolbar.setNavigationIcon(R.drawable.ic_up);
 
         mMaxHeaderElevation = getResources().getDimensionPixelSize(R.dimen.session_detail_max_header_elevation);
 
@@ -66,6 +65,10 @@ public class StationsMapActivity extends ActionBarActivity implements Observable
                 }
             }
         });
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().add(R.id.stations_placeholder, StationsMapFragment.newInstance(), "stations").commit();
+        }
     }
 
     @Override
@@ -79,16 +82,6 @@ public class StationsMapActivity extends ActionBarActivity implements Observable
         if (vto.isAlive()) {
             vto.removeGlobalOnLayoutListener(mGlobalLayoutListener);
         }
-    }
-
-    protected Toolbar getActionBarToolbar() {
-        if (mActionBarToolbar == null) {
-            mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
-            if (mActionBarToolbar != null) {
-                setSupportActionBar(mActionBarToolbar);
-            }
-        }
-        return mActionBarToolbar;
     }
 
     private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener
@@ -111,6 +104,7 @@ public class StationsMapActivity extends ActionBarActivity implements Observable
         if (lp.height != mPhotoHeightPixels) {
             lp.height = mPhotoHeightPixels;
             mPhotoViewContainer.setLayoutParams(lp);
+            mPhotoViewContainer.requestLayout();
         }
 
         ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)
@@ -143,4 +137,10 @@ public class StationsMapActivity extends ActionBarActivity implements Observable
         mPhotoViewContainer.setTranslationY(scrollY * 0.5f);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_stations_map, menu);
+        return true;
+    }
 }
