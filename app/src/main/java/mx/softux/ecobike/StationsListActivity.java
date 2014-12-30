@@ -1,6 +1,7 @@
 package mx.softux.ecobike;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,7 +16,6 @@ public class StationsListActivity extends StationsActivity {
         setContentView(R.layout.activity_stations_list);
 
         final Toolbar toolbar = getActionBarToolbar();
-//        toolbar.setNavigationIcon(R.drawable.ic_up);
     }
 
     @Override
@@ -23,5 +23,13 @@ public class StationsListActivity extends StationsActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_stations_list, menu);
         return true;
+    }
+
+    @Override
+    public void onApiServiceConnected(ApiService apiService) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.stations_list_fragment);
+        if(fragment instanceof ApiServiceConnection) {
+            ((ApiServiceConnection) fragment).onApiServiceConnected(apiService);
+        }
     }
 }

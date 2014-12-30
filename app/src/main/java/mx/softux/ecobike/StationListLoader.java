@@ -11,25 +11,21 @@ public class StationListLoader extends ModelLoader<StationList> {
     private StationList stationList = null;
     private Integer requestId;
 
-    public StationListLoader(Context context) {
-        super(context);
+    public StationListLoader(ApiService apiService, Context context) {
+        super(apiService, context);
     }
 
     @Override
     protected void onStartLoading() {
         super.onStartLoading();
 
-        if(stationList != null) {
+        if (stationList == null) {
+            requestId = apiService.requestStationList();
+        } else {
             deliverResult(stationList);
         }
 
         registerReceiver(stationListBroadcastReceiver, Model.StationList.READY);
-    }
-
-    @Override
-    protected void onServiceConnected(ApiService apiService) {
-        if(stationList == null)
-            requestId = apiService.requestStationList();
     }
 
     @Override

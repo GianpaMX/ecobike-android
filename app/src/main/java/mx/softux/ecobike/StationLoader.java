@@ -12,8 +12,8 @@ public class StationLoader extends ModelLoader<StationModel> {
     private final int number;
     private Integer requestId;
 
-    public StationLoader(Context context, int number) {
-        super(context);
+    public StationLoader(int number, ApiService apiService, Context context) {
+        super(apiService, context);
 
         this.number = number;
     }
@@ -22,18 +22,14 @@ public class StationLoader extends ModelLoader<StationModel> {
     protected void onStartLoading() {
         super.onStartLoading();
 
-        if(station != null) {
+        if (station != null) {
             deliverResult(station);
+        } else {
+            requestId = apiService.requestStation(number);
         }
 
         registerReceiver(stationBroadcastReceiver, Model.Station.READY);
         registerReceiver(stationBroadcastReceiver, Model.Station.UPDATE);
-    }
-
-    @Override
-    protected void onServiceConnected(ApiService apiService) {
-        if(station == null)
-            requestId = apiService.requestStation(number);
     }
 
     @Override

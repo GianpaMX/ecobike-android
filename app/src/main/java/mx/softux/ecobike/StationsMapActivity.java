@@ -2,6 +2,7 @@ package mx.softux.ecobike;
 
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -65,10 +66,6 @@ public class StationsMapActivity extends StationsActivity implements ObservableS
                 }
             }
         });
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.stations_placeholder, StationsMapFragment.newInstance(), "stations").commit();
-        }
     }
 
     @Override
@@ -142,5 +139,13 @@ public class StationsMapActivity extends StationsActivity implements ObservableS
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_stations_map, menu);
         return true;
+    }
+
+    @Override
+    public void onApiServiceConnected(ApiService apiService) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.stations_map_fragment);
+        if (fragment instanceof ApiServiceConnection) {
+            ((ApiServiceConnection) fragment).onApiServiceConnected(apiService);
+        }
     }
 }

@@ -1,6 +1,5 @@
 package mx.softux.ecobike;
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -141,15 +140,17 @@ public class ApiService extends NetworkService {
             idleHandler.removeCallbacks(idleCountertask);
             idleCountertask = null;
         }
+
+        if (cacheService != null) unbindService(cacheServiceConnection);
+
         Log.d(TAG, "onDestroy");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (idleCountertask != null) {
-            throw new IllegalStateException("idleCountertask should be null");
+        if (idleCountertask == null) {
+            idleHandler = new Handler();
         }
-        idleHandler = new Handler();
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -171,11 +172,7 @@ public class ApiService extends NetworkService {
                 idleHandler.postDelayed(this, SECOND);
                 Log.d(TAG, "time = " + timeout);
 
-                if ((timeout -= 1 * SECOND) <= 0) {
-                    if (cacheService != null) unbindService(cacheServiceConnection);
-
-                    stopSelf();
-                }
+                if ((timeout -= 1 * SECOND) <= 0) stopSelf();
             }
         };
 
@@ -194,16 +191,6 @@ public class ApiService extends NetworkService {
         public ApiService getApiService() {
             return ApiService.this;
         }
-    }
-
-    public static boolean isRunning(Context context) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (ApiService.class.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private static enum RequestType {

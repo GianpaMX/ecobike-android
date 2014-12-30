@@ -109,7 +109,7 @@ public class StationActivity extends ActionBarActivity implements StationFragmen
 
     @Override
     public Loader<StationModel> onCreateLoader(int id, Bundle args) {
-        return new StationLoader(this, getIntent().getIntExtra(P.Station.STATION_NUMBER, 1));
+        return new StationLoader(getIntent().getIntExtra(P.Station.STATION_NUMBER, 1), apiService, this);
     }
 
     @Override

@@ -8,7 +8,8 @@ import android.support.v4.content.Loader;
 /**
  * Created by gianpa on 12/29/14.
  */
-public class StationsListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<StationList> {
+public class StationsListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<StationList>, ApiServiceConnection {
+    private ApiService apiService;
     private StationListAdapter adapter;
 
     public static StationsListFragment newInstance() {
@@ -26,13 +27,11 @@ public class StationsListFragment extends ListFragment implements LoaderManager.
 //        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new String[]{"Hola", "adios", "blah", "foo", "bar"});
         adapter = new StationListAdapter(getActivity());
         setListAdapter(adapter);
-
-        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
     public Loader<StationList> onCreateLoader(int id, Bundle args) {
-        return new StationListLoader(getActivity());
+        return new StationListLoader(apiService, getActivity());
     }
 
     @Override
@@ -43,5 +42,16 @@ public class StationsListFragment extends ListFragment implements LoaderManager.
     @Override
     public void onLoaderReset(Loader<StationList> loader) {
         adapter.setStationList(null);
+    }
+
+    @Override
+    public void onApiServiceConnected(ApiService apiService) {
+        this.apiService = apiService;
+        getLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    public ApiService getApiService() {
+        return apiService;
     }
 }

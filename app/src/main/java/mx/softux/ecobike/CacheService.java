@@ -32,6 +32,12 @@ public class CacheService extends Service {
         Log.d(TAG, "onCreate");
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+    }
+
     public void saveStationList(final StationList stationList) {
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -79,5 +85,11 @@ public class CacheService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return binder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        stopSelf();
+        return false;
     }
 }
