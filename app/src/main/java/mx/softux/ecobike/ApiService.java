@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.util.Log;
@@ -24,11 +23,8 @@ public class ApiService extends NetworkService {
     private static final String TAG = ApiService.class.getSimpleName();
 
     private static final String API_URL = "http://192.168.56.1:3000";
-    private static final int SECOND = 1000;
-    private static final int TIMEOUT = 5 * SECOND;
 
-    private Handler idleHandler = null;
-    private Runnable idleCountertask = null;
+    private Timer stopSelfTimer = null;
 
     private final IBinder binder = new Binder();
 
@@ -136,9 +132,8 @@ public class ApiService extends NetworkService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (idleCountertask != null) {
-            idleHandler.removeCallbacks(idleCountertask);
-            idleCountertask = null;
+        if(stopSelfTimer != null) {
+            stopSelfTimer.destroy();
         }
 
         if (cacheService != null) unbindService(cacheServiceConnection);
@@ -148,9 +143,7 @@ public class ApiService extends NetworkService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (idleCountertask == null) {
-            idleHandler = new Handler();
-        }
+        if(stopSelfTimer == null) stopSelfTimer = new Timer();
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -162,21 +155,14 @@ public class ApiService extends NetworkService {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        if (idleHandler == null) return false;
+        if(stopSelfTimer == null) return false;
 
-        idleCountertask = new Runnable() {
-            int timeout = TIMEOUT;
-
+        stopSelfTimer.setStop(new Timer.Stop() {
             @Override
-            public void run() {
-                idleHandler.postDelayed(this, SECOND);
-                Log.d(TAG, "time = " + timeout);
-
-                if ((timeout -= 1 * SECOND) <= 0) stopSelf();
+            public void onStop() {
+                stopSelf();
             }
-        };
-
-        idleHandler.postDelayed(idleCountertask, SECOND);
+        });
 
         return true;
     }
@@ -184,7 +170,7 @@ public class ApiService extends NetworkService {
     @Override
     public void onRebind(Intent intent) {
         super.onRebind(intent);
-        idleHandler.removeCallbacks(idleCountertask);
+        stopSelfTimer.cancel();
     }
 
     public class Binder extends android.os.Binder {
