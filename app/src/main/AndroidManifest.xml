@@ -49,10 +49,6 @@
             android:name=".activities.StationsListActivity"
             android:label="@string/title_activity_stations_map"></activity>
 
-        <activity
-            android:name=".activities.StationActivity"
-            android:label="@string/title_activity_station" />
-
         <service
             android:name=".services.ApiService"
             android:enabled="true"

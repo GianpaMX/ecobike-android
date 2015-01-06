@@ -13,10 +13,12 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
-import mx.softux.ecobike.services.ApiService;
 import mx.softux.ecobike.ApiServiceConnection;
 import mx.softux.ecobike.ObservableScrollView;
+import mx.softux.ecobike.P;
 import mx.softux.ecobike.R;
+import mx.softux.ecobike.fragments.StationFragment;
+import mx.softux.ecobike.services.ApiService;
 import mx.softux.ecobike.utilities.UIUtils;
 
 
@@ -72,6 +74,23 @@ public class StationsMapActivity extends StationsActivity implements ObservableS
                 }
             }
         });
+
+        if (savedInstanceState == null && getIntent().getExtras() != null) {
+            if (getIntent().getExtras() != null
+                    && getIntent().getExtras().get(P.Station.STATION_NUMBER) != null) {
+                int stationNumber = getIntent().getExtras().getInt(P.Station.STATION_NUMBER);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.header_details, StationFragment.newInstance(stationNumber))
+                        .commit();
+            }
+        }
+
+        if (getIntent().getExtras() != null
+                && getIntent().getExtras().get(P.Station.STATION_NUMBER) != null) {
+            int stationNumber = getIntent().getExtras().getInt(P.Station.STATION_NUMBER);
+            setTitle(getString(R.string.station_header_title, stationNumber));
+        }
     }
 
     @Override
@@ -149,9 +168,10 @@ public class StationsMapActivity extends StationsActivity implements ObservableS
 
     @Override
     public void onApiServiceConnected(ApiService apiService) {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.stations_map_fragment);
-        if (fragment instanceof ApiServiceConnection) {
-            ((ApiServiceConnection) fragment).onApiServiceConnected(apiService);
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof ApiServiceConnection) {
+                ((ApiServiceConnection) fragment).onApiServiceConnected(apiService);
+            }
         }
     }
 }

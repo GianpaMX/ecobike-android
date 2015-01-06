@@ -1,12 +1,17 @@
 package mx.softux.ecobike.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.view.View;
+import android.widget.ListView;
 
 import mx.softux.ecobike.ApiServiceConnection;
+import mx.softux.ecobike.P;
 import mx.softux.ecobike.StationListAdapter;
+import mx.softux.ecobike.activities.StationsMapActivity;
 import mx.softux.ecobike.model.StationList;
 import mx.softux.ecobike.model.loader.StationListLoader;
 import mx.softux.ecobike.services.ApiService;
@@ -32,6 +37,13 @@ public class StationsListFragment extends ListFragment implements LoaderManager.
 
         adapter = new StationListAdapter(getActivity());
         setListAdapter(adapter);
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Intent mapActivity = new Intent(getActivity(), StationsMapActivity.class);
+        mapActivity.putExtra(P.Station.STATION_NUMBER, (int) id);
+        startActivity(mapActivity);
     }
 
     @Override
