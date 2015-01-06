@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 
 import org.paoloconte.smoothchart.SmoothLineChart;
 
+import mx.softux.ecobike.model.StationModel;
+
 /**
  * Created by gianpa on 11/16/14.
  */

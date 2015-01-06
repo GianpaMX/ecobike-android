@@ -1,4 +1,4 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

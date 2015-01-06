@@ -1,4 +1,4 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.services;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -9,6 +9,8 @@ import com.android.volley.mock.MockNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 
 import java.io.File;
+
+import mx.softux.ecobike.services.ApiService;
 
 /**
  * Created by gianpa on 11/15/14.

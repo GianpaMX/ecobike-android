@@ -1,4 +1,4 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.activities;
 
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -12,6 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+
+import mx.softux.ecobike.services.ApiService;
+import mx.softux.ecobike.ApiServiceConnection;
+import mx.softux.ecobike.ObservableScrollView;
+import mx.softux.ecobike.R;
+import mx.softux.ecobike.utilities.UIUtils;
 
 
 public class StationsMapActivity extends StationsActivity implements ObservableScrollView.Callbacks {

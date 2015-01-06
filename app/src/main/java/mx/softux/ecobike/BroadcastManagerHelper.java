@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 
+import mx.softux.ecobike.model.Model;
+import mx.softux.ecobike.model.StationList;
+import mx.softux.ecobike.model.StationModel;
+
 /**
  * Created by gianpa on 12/30/14.
  */

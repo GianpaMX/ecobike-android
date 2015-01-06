@@ -1,27 +1,37 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.fragments;
 
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
-import com.google.android.gms.maps.SupportMapFragment;
+import mx.softux.ecobike.ApiServiceConnection;
+import mx.softux.ecobike.StationListAdapter;
+import mx.softux.ecobike.model.StationList;
+import mx.softux.ecobike.model.loader.StationListLoader;
+import mx.softux.ecobike.services.ApiService;
 
-public class StationsMapFragment extends SupportMapFragment implements LoaderManager.LoaderCallbacks<StationList>, ApiServiceConnection {
+/**
+ * Created by gianpa on 12/29/14.
+ */
+public class StationsListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<StationList>, ApiServiceConnection {
     private ApiService apiService;
+    private StationListAdapter adapter;
 
-    public static StationsMapFragment newInstance() {
-        StationsMapFragment fragment = new StationsMapFragment();
+    public static StationsListFragment newInstance() {
+        StationsListFragment fragment = new StationsListFragment();
         return fragment;
     }
 
-    public StationsMapFragment() {
-        // Required empty public constructor
-        super();
+    public StationsListFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        adapter = new StationListAdapter(getActivity());
+        setListAdapter(adapter);
     }
 
     @Override
@@ -31,12 +41,12 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
 
     @Override
     public void onLoadFinished(Loader<StationList> loader, StationList data) {
-
+        adapter.setStationList(data);
     }
 
     @Override
     public void onLoaderReset(Loader<StationList> loader) {
-
+        adapter.setStationList(null);
     }
 
     @Override

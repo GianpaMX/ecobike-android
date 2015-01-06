@@ -1,4 +1,4 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.model;
 
 import org.json.JSONObject;
 

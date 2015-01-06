@@ -1,4 +1,4 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.activities;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -7,6 +7,10 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.MenuItem;
+
+import mx.softux.ecobike.services.ApiService;
+import mx.softux.ecobike.ApiServiceConnection;
+import mx.softux.ecobike.R;
 
 /**
  * Created by gianpa on 12/29/14.

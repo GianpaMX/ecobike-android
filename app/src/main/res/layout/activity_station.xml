@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context="mx.softux.ecobike.StationActivity">
+    tools:context="mx.softux.ecobike.activities.StationActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -23,7 +23,7 @@
         android:id="@+id/fragment_station"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="mx.softux.ecobike.StationFragment"
+        android:name="mx.softux.ecobike.fragments.StationFragment"
         tools:layout="@layout/fragment_station"
         android:layout_below="@+id/toolbar"
         android:layout_alignParentLeft="true"

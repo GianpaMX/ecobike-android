@@ -1,5 +1,7 @@
 package mx.softux.ecobike;
 
+import mx.softux.ecobike.services.ApiService;
+
 /**
  * Created by gianpa on 12/30/14.
  */

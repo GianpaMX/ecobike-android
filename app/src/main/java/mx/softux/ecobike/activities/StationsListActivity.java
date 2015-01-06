@@ -1,10 +1,14 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
+
+import mx.softux.ecobike.services.ApiService;
+import mx.softux.ecobike.ApiServiceConnection;
+import mx.softux.ecobike.R;
 
 /**
  * Created by gianpa on 12/29/14.

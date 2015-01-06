@@ -1,4 +1,4 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.services;
 
 import android.app.Service;
 import android.content.Intent;
@@ -10,6 +10,11 @@ import android.util.Log;
 import org.json.JSONObject;
 
 import java.io.File;
+
+import mx.softux.ecobike.BroadcastManagerHelper;
+import mx.softux.ecobike.utilities.CacheUtilities;
+import mx.softux.ecobike.model.StationList;
+import mx.softux.ecobike.model.StationModel;
 
 /**
  * Created by gianpa on 12/29/14.

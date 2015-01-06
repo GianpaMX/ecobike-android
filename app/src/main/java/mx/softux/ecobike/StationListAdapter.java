@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import mx.softux.ecobike.model.StationList;
+import mx.softux.ecobike.model.StationModel;
+
 /**
  * Created by gianpa on 12/29/14.
  */

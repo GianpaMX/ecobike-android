@@ -1,11 +1,10 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.activities;
 
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -16,6 +15,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import mx.softux.ecobike.services.ApiService;
+import mx.softux.ecobike.services.GcmRegisterIntentService;
+import mx.softux.ecobike.P;
+import mx.softux.ecobike.R;
+import mx.softux.ecobike.fragments.StationFragment;
+import mx.softux.ecobike.model.loader.StationLoader;
+import mx.softux.ecobike.model.StationModel;
 
 public class StationActivity extends ActionBarActivity implements StationFragment.StationFragmentHostActivity, LoaderManager.LoaderCallbacks<StationModel> {
     private ApiService apiService = null;
@@ -40,7 +47,7 @@ public class StationActivity extends ActionBarActivity implements StationFragmen
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(P.NetwrokService.REQUEST_ID)) {
                 requestId = savedInstanceState.getInt(P.NetwrokService.REQUEST_ID);
-                onResponse(apiService.getResponse(requestId));
+//                onResponse(apiService.getResponse(requestId));
             }
         }
 
@@ -52,7 +59,7 @@ public class StationActivity extends ActionBarActivity implements StationFragmen
         super.onStart();
 
         if (requestStationMonitorReceiver != null) {
-            broadcastManager.registerReceiver(requestStationMonitorReceiver, new IntentFilter(NetworkService.RESPONSE));
+//            broadcastManager.registerReceiver(requestStationMonitorReceiver, new IntentFilter(NetworkService.RESPONSE));
         }
     }
 
@@ -131,19 +138,19 @@ public class StationActivity extends ActionBarActivity implements StationFragmen
             return;
         }
 
-        broadcastManager.registerReceiver(requestStationMonitorReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (requestId != null && intent.getIntExtra(P.NetwrokService.REQUEST_ID, 0) == requestId) {
-                    NetworkService.Response response = apiService.getResponse(requestId);
-
-                    broadcastManager.unregisterReceiver(requestStationMonitorReceiver);
-                    requestStationMonitorReceiver = null;
-
-                    onResponse(response);
-                }
-            }
-        }, new IntentFilter(NetworkService.RESPONSE));
+//        broadcastManager.registerReceiver(requestStationMonitorReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                if (requestId != null && intent.getIntExtra(P.NetwrokService.REQUEST_ID, 0) == requestId) {
+//                    NetworkService.Response response = apiService.getResponse(requestId);
+//
+//                    broadcastManager.unregisterReceiver(requestStationMonitorReceiver);
+//                    requestStationMonitorReceiver = null;
+//
+//                    onResponse(response);
+//                }
+//            }
+//        }, new IntentFilter(NetworkService.RESPONSE));
 
         Intent apiServiceIntent = new Intent(this, ApiService.class);
         bindService(apiServiceIntent, apiServiceConnection = new ServiceConnection() {
@@ -161,18 +168,18 @@ public class StationActivity extends ActionBarActivity implements StationFragmen
         }, Context.BIND_AUTO_CREATE);
     }
 
-    private void onResponse(NetworkService.Response response) {
-        if(response.getStatus() == NetworkService.Response.UNKNOWN)
-            return;
-
-        requestId = null;
-
-        StationFragment stationFragment = (StationFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_station);
-        if (response.getStatus() != NetworkService.Response.OK) {
-            stationFragment.onMonitorRequestResponse(false, "Error requesting monitor");
-            return;
-        }
-
-        stationFragment.onMonitorRequestResponse(true, "OK");
-    }
+//    private void onResponse(NetworkService.Response response) {
+//        if(response.getStatus() == NetworkService.Response.UNKNOWN)
+//            return;
+//
+//        requestId = null;
+//
+//        StationFragment stationFragment = (StationFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_station);
+//        if (response.getStatus() != NetworkService.Response.OK) {
+//            stationFragment.onMonitorRequestResponse(false, "Error requesting monitor");
+//            return;
+//        }
+//
+//        stationFragment.onMonitorRequestResponse(true, "OK");
+//    }
 }

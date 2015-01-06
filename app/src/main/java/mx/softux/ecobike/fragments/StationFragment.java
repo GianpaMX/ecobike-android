@@ -1,4 +1,4 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.fragments;
 
 
 import android.os.Bundle;
@@ -15,6 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+
+import mx.softux.ecobike.P;
+import mx.softux.ecobike.R;
+import mx.softux.ecobike.StatsLineChart;
+import mx.softux.ecobike.model.StationModel;
 
 public class StationFragment extends Fragment {
     private StationModel station;

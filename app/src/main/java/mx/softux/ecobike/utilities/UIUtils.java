@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package mx.softux.ecobike;
+package mx.softux.ecobike.utilities;
 
 /**
  * An assortment of UI helpers.

@@ -1,32 +1,32 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 
-/**
- * Created by gianpa on 12/29/14.
- */
-public class StationsListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<StationList>, ApiServiceConnection {
-    private ApiService apiService;
-    private StationListAdapter adapter;
+import com.google.android.gms.maps.SupportMapFragment;
 
-    public static StationsListFragment newInstance() {
-        StationsListFragment fragment = new StationsListFragment();
+import mx.softux.ecobike.ApiServiceConnection;
+import mx.softux.ecobike.model.StationList;
+import mx.softux.ecobike.model.loader.StationListLoader;
+import mx.softux.ecobike.services.ApiService;
+
+public class StationsMapFragment extends SupportMapFragment implements LoaderManager.LoaderCallbacks<StationList>, ApiServiceConnection {
+    private ApiService apiService;
+
+    public static StationsMapFragment newInstance() {
+        StationsMapFragment fragment = new StationsMapFragment();
         return fragment;
     }
 
-    public StationsListFragment() {
+    public StationsMapFragment() {
+        // Required empty public constructor
+        super();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, new String[]{"Hola", "adios", "blah", "foo", "bar"});
-        adapter = new StationListAdapter(getActivity());
-        setListAdapter(adapter);
     }
 
     @Override
@@ -36,12 +36,12 @@ public class StationsListFragment extends ListFragment implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<StationList> loader, StationList data) {
-        adapter.setStationList(data);
+
     }
 
     @Override
     public void onLoaderReset(Loader<StationList> loader) {
-        adapter.setStationList(null);
+
     }
 
     @Override

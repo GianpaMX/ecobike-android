@@ -1,8 +1,13 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.model.loader;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import mx.softux.ecobike.P;
+import mx.softux.ecobike.model.Model;
+import mx.softux.ecobike.model.StationList;
+import mx.softux.ecobike.services.ApiService;
 
 /**
  * Created by gianpa on 12/26/14.

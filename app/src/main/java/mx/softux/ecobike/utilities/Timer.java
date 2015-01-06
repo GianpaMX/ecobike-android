@@ -1,4 +1,4 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.utilities;
 
 import android.os.Handler;
 import android.util.Log;

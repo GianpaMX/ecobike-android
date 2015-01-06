@@ -37,7 +37,7 @@
             android:value="AIzaSyAuuY5b0nzNsyv_5wKBfLWACiUwfr89Mv4" />
 
         <activity
-            android:name=".StationsMapActivity"
+            android:name=".activities.StationsMapActivity"
             android:label="@string/title_activity_stations_map">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,27 +46,27 @@
         </activity>
 
         <activity
-            android:name=".StationsListActivity"
+            android:name=".activities.StationsListActivity"
             android:label="@string/title_activity_stations_map"></activity>
 
         <activity
-            android:name="mx.softux.ecobike.StationActivity"
+            android:name=".activities.StationActivity"
             android:label="@string/title_activity_station" />
 
         <service
-            android:name="mx.softux.ecobike.ApiService"
+            android:name=".services.ApiService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".CacheService"
+            android:name=".services.CacheService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name="mx.softux.ecobike.GcmRegisterIntentService"
+            android:name=".services.GcmRegisterIntentService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name="mx.softux.ecobike.GcmIntentService"
+            android:name=".services.GcmIntentService"
             android:enabled="true"
             android:exported="false" />
 

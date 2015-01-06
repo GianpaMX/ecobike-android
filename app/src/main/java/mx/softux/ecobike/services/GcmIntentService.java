@@ -1,4 +1,4 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.services;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -7,6 +7,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+
+import mx.softux.ecobike.GcmBroadcastReceiver;
+import mx.softux.ecobike.model.Model;
+import mx.softux.ecobike.P;
 
 /**
  * Created by gianpa on 11/17/14.

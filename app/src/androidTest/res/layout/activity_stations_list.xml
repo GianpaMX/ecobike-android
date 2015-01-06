@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/stations_list_fragment"
-        android:name="mx.softux.ecobike.StationsListFragment"
+        android:name="mx.softux.ecobike.fragments.StationsListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

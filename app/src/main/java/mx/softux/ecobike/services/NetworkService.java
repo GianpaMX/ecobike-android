@@ -1,4 +1,4 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.services;
 
 import android.app.Service;
 import android.content.Context;
@@ -18,6 +18,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import mx.softux.ecobike.P;
 
 public abstract class NetworkService extends Service {
     private static final String TAG = NetworkService.class.getSimpleName();

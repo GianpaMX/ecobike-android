@@ -1,4 +1,4 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.services;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -15,6 +15,12 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import mx.softux.ecobike.BroadcastManagerHelper;
+import mx.softux.ecobike.P;
+import mx.softux.ecobike.model.StationList;
+import mx.softux.ecobike.model.StationModel;
+import mx.softux.ecobike.utilities.Timer;
 
 /**
  * Created by gianpa on 11/15/14.

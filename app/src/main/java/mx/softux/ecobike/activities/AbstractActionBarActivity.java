@@ -1,8 +1,10 @@
-package mx.softux.ecobike;
+package mx.softux.ecobike.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+
+import mx.softux.ecobike.R;
 
 /**
  * Created by gianpa on 12/29/14.
