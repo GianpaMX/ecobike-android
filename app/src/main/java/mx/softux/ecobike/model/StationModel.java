@@ -3,11 +3,12 @@ package mx.softux.ecobike.model;
 import android.graphics.PointF;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import mx.softux.ecobike.utilities.LogUtils;
 
 /**
  * Created by gianpa on 11/14/14.
@@ -96,7 +97,7 @@ public class StationModel extends Model {
             double y = jsonObject.getJSONObject("location").optDouble("longitude");
             location = new PointF((float) x, (float) y);
         } catch (JSONException e) {
-            Log.e(TAG, "location", e);
+            LogUtils.LOGE(TAG, "location", e);
         }
         bikes = (Integer) jsonObject.opt("bikes");
         slots = (Integer) jsonObject.opt("slots");
@@ -107,7 +108,7 @@ public class StationModel extends Model {
                 stats[i] = new Stat(statsJSONArray.getJSONObject(i));
             }
         } catch (JSONException e) {
-            Log.e(TAG, "stats", e);
+            LogUtils.LOGE(TAG, "stats", e);
         }
         updateTime = (Long) jsonObject.opt("updateTime");
     }
@@ -140,7 +141,7 @@ public class StationModel extends Model {
 
             jsonObject.put("updateTime", updateTime);
         } catch (JSONException e) {
-            Log.e(TAG, "JSONObject.put", e);
+            LogUtils.LOGE(TAG, "JSONObject.put", e);
 
             return null;
         }

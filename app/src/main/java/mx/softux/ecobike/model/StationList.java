@@ -2,11 +2,12 @@ package mx.softux.ecobike.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import mx.softux.ecobike.utilities.LogUtils;
 
 /**
  * Created by gianpa on 12/26/14.
@@ -59,7 +60,7 @@ public class StationList extends ModelList<StationModel> implements Parcelable {
                 this.add(new StationModel(jsonArray.getJSONObject(i)));
             }
         } catch (JSONException e) {
-            Log.e(TAG, "stations", e);
+            LogUtils.LOGE(TAG, "stations", e);
         }
     }
 
@@ -74,7 +75,7 @@ public class StationList extends ModelList<StationModel> implements Parcelable {
             }
             jsonObject.put("stations", stationsJsonArray);
         } catch (JSONException e) {
-            Log.e(TAG, "JSONObject.put", e);
+            LogUtils.LOGE(TAG, "JSONObject.put", e);
 
             return null;
         }

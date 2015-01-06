@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.Parcelable;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,6 +19,7 @@ import mx.softux.ecobike.BroadcastManagerHelper;
 import mx.softux.ecobike.P;
 import mx.softux.ecobike.model.StationList;
 import mx.softux.ecobike.model.StationModel;
+import mx.softux.ecobike.utilities.LogUtils;
 import mx.softux.ecobike.utilities.Timer;
 
 /**
@@ -96,7 +96,7 @@ public class ApiService extends NetworkService {
         try {
             jsonObject.put("regId", regId);
         } catch (JSONException e) {
-            Log.e(TAG, "jsonObject.put");
+            LogUtils.LOGE(TAG, "jsonObject.put");
             return null;
         }
 
@@ -129,7 +129,7 @@ public class ApiService extends NetworkService {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate");
+        LogUtils.LOGD(TAG, "onCreate");
 
         Intent cacheServiceIntent = new Intent(this, CacheService.class);
         bindService(cacheServiceIntent, cacheServiceConnection, Context.BIND_AUTO_CREATE);
@@ -144,7 +144,7 @@ public class ApiService extends NetworkService {
 
         if (cacheService != null) unbindService(cacheServiceConnection);
 
-        Log.d(TAG, "onDestroy");
+        LogUtils.LOGD(TAG, "onDestroy");
     }
 
     @Override

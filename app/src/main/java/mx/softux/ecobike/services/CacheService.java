@@ -5,16 +5,16 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import org.json.JSONObject;
 
 import java.io.File;
 
 import mx.softux.ecobike.BroadcastManagerHelper;
-import mx.softux.ecobike.utilities.CacheUtilities;
 import mx.softux.ecobike.model.StationList;
 import mx.softux.ecobike.model.StationModel;
+import mx.softux.ecobike.utilities.CacheUtilities;
+import mx.softux.ecobike.utilities.LogUtils;
 
 /**
  * Created by gianpa on 12/29/14.
@@ -34,13 +34,13 @@ public class CacheService extends Service {
         broadcastManager = LocalBroadcastManager.getInstance(this);
         cacheUtilities = new CacheUtilities(this);
 
-        Log.d(TAG, "onCreate");
+        LogUtils.LOGD(TAG, "onCreate");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy");
+        LogUtils.LOGD(TAG, "onDestroy");
     }
 
     public void saveStationList(final StationList stationList) {
@@ -73,7 +73,7 @@ public class CacheService extends Service {
                     }
                     BroadcastManagerHelper.sendStationList(stationList, requestId, BroadcastManagerHelper.BroadcastSource.CACHE, broadcastManager);
                 } catch (Exception e) {
-                    Log.e(TAG, "requestStationList", e);
+                    LogUtils.LOGE(TAG, "requestStationList", e);
                     return null;
                 }
                 return null;

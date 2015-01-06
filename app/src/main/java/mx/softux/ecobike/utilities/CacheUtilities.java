@@ -54,11 +54,9 @@ public class CacheUtilities {
             streamReader.close();
 
             String jsonString = responseStrBuilder.toString();
-            Log.d(TAG, "Read from " + file.getAbsolutePath());
-            Log.d(TAG, jsonString);
             jsonObject = new JSONObject(jsonString);
         } catch (Exception e) {
-            Log.e(TAG, "Reading file", e);
+            LogUtils.LOGE(TAG, "Reading file", e);
         }
 
         try {
@@ -66,7 +64,7 @@ public class CacheUtilities {
                 in.close();
             }
         } catch (IOException e) {
-            Log.e(TAG, "Closing file", e);
+            LogUtils.LOGE(TAG, "Closing file", e);
         }
         return jsonObject;
     }
@@ -78,12 +76,10 @@ public class CacheUtilities {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(out, CHARSET_NAME);
 
             String jsonString = jsonObject.toString();
-            Log.d(TAG, "Write to " + file.getAbsolutePath());
-            Log.d(TAG, jsonString);
             outputStreamWriter.write(jsonString);
             outputStreamWriter.close();
         } catch (Exception e) {
-            Log.e(TAG, "", e);
+            LogUtils.LOGE(TAG, "", e);
         }
 
         try {
@@ -91,7 +87,7 @@ public class CacheUtilities {
                 out.close();
             }
         } catch (IOException e) {
-            Log.e(TAG, "Closing file", e);
+            LogUtils.LOGE(TAG, "Closing file", e);
         }
     }
 }

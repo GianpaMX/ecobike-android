@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import mx.softux.ecobike.P;
+import mx.softux.ecobike.utilities.LogUtils;
 
 public abstract class NetworkService extends Service {
     private static final String TAG = NetworkService.class.getSimpleName();
@@ -64,7 +64,7 @@ public abstract class NetworkService extends Service {
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                Log.e(TAG, "onErrorResponse", volleyError);
+                LogUtils.LOGE(TAG, "onErrorResponse", volleyError);
                 responses.put(i, new Response(Response.ERROR));
                 notifyResponse(i);
             }

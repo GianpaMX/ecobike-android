@@ -34,7 +34,7 @@ public class Timer {
             @Override
             public void run() {
                 idleHandler.postDelayed(this, SECOND);
-                Log.d(TAG, "time = " + timeout);
+                LogUtils.LOGD(TAG, "time = " + timeout);
 
                 if ((timeout -= 1 * SECOND) <= 0) stop.onStop();
             }
