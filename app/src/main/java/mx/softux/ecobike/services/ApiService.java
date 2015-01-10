@@ -9,7 +9,6 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.Parcelable;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -78,7 +77,6 @@ public class ApiService extends NetworkService {
     public Integer requestStation(int number) {
         String url = String.format("%s/station/%d", API_URL, number);
 
-        broadcastManager.registerReceiver(responseReceiver, new IntentFilter(NetworkService.RESPONSE));
         Integer requestId = requestGet(url, null, new ResponseParcelable() {
             @Override
             public Parcelable newInstance(JSONObject jsonObject) {
@@ -89,29 +87,9 @@ public class ApiService extends NetworkService {
         return requestId;
     }
 
-    public Integer requestStationMonitor(StationModel station, String regId) {
-        String url = String.format("%s/station/%1$d/monitor", API_URL, station.number);
-
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("regId", regId);
-        } catch (JSONException e) {
-            LogUtils.LOGE(TAG, "jsonObject.put");
-            return null;
-        }
-
-        return requestPost(url, jsonObject, new ResponseParcelable() {
-            @Override
-            public Parcelable newInstance(JSONObject jsonObject) {
-                return null;
-            }
-        });
-    }
-
     public Integer requestStationList() {
         String url = String.format("%s/station", API_URL);
 
-        broadcastManager.registerReceiver(responseReceiver, new IntentFilter(NetworkService.RESPONSE));
         Integer requestId = requestGet(url, null, new ResponseParcelable() {
             @Override
             public Parcelable newInstance(JSONObject jsonObject) {
@@ -133,6 +111,8 @@ public class ApiService extends NetworkService {
 
         Intent cacheServiceIntent = new Intent(this, CacheService.class);
         bindService(cacheServiceIntent, cacheServiceConnection, Context.BIND_AUTO_CREATE);
+
+        broadcastManager.registerReceiver(responseReceiver, new IntentFilter(NetworkService.RESPONSE));
     }
 
     @Override
@@ -143,6 +123,8 @@ public class ApiService extends NetworkService {
         }
 
         if (cacheService != null) unbindService(cacheServiceConnection);
+
+        unregisterReceiver(responseReceiver);
 
         LogUtils.LOGD(TAG, "onDestroy");
     }
