@@ -7,17 +7,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.os.Parcelable;
-
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import mx.softux.ecobike.BroadcastManagerHelper;
 import mx.softux.ecobike.P;
 import mx.softux.ecobike.model.StationList;
 import mx.softux.ecobike.model.StationModel;
+import mx.softux.ecobike.services.api.ApiRequest;
+import mx.softux.ecobike.services.api.ApiRequestQueue;
+import mx.softux.ecobike.services.api.StationApiRequest;
+import mx.softux.ecobike.services.api.StationListApiRequest;
 import mx.softux.ecobike.utilities.LogUtils;
 import mx.softux.ecobike.utilities.Timer;
 
@@ -27,81 +25,54 @@ import mx.softux.ecobike.utilities.Timer;
 public class ApiService extends NetworkService {
     private static final String TAG = ApiService.class.getSimpleName();
 
-    private static final String API_URL = "http://192.168.56.1:3000";
-
     private Timer stopSelfTimer = null;
-
     private final IBinder binder = new Binder();
 
     private CacheService cacheService;
 
-    private Map<Integer, RequestType> requestTypes = new HashMap<Integer, RequestType>();
+    private ApiRequestQueue apiRequestQueue;
+
     private BroadcastReceiver responseReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             int requestId = intent.getIntExtra(P.NetwrokService.REQUEST_ID, 0);
 
-            if (!requestTypes.containsKey(requestId)) {
-                return;
-            }
+            ApiRequest apiRequest = apiRequestQueue.onResponse(requestId);
+            Response response = apiRequest.response;
 
-            NetworkService.Response response = getResponse(requestId);
-            if (response.getStatus() != NetworkService.Response.OK) {
-                return;
-            }
-
-            switch (requestTypes.get(requestId)) {
-                case STATION: {
-                    StationModel station = (StationModel) response.getParcelable();
+            if (apiRequest instanceof StationApiRequest && response.getStatus() == Response.OK) {
+                StationModel station = (StationModel) response.getParcelable();
+                BroadcastManagerHelper.sendStation(station, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
+            } else if (apiRequest instanceof StationListApiRequest && response.getStatus() == Response.OK) {
+                StationList stationList = (StationList) response.getParcelable();
+                if (cacheService != null)
+                    cacheService.saveStationList(stationList);
+                for (StationModel station : stationList) {
                     BroadcastManagerHelper.sendStation(station, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
                 }
-                break;
-                case STATION_LIST: {
-                    StationList stationList = (StationList) response.getParcelable();
-                    if (cacheService != null)
-                        cacheService.saveStationList(stationList);
-                    for (StationModel station : stationList) {
-                        BroadcastManagerHelper.sendStation(station, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
-                    }
-                    BroadcastManagerHelper.sendStationList(stationList, requestId, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
-                }
-                break;
-                default:
-                    // Ignore
-            }
+                BroadcastManagerHelper.sendStationList(stationList, requestId, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
+            } else {
 
-            requestTypes.remove(requestId);
+            }
         }
     };
 
     public Integer requestStation(int number) {
-        String url = String.format("%s/station/%d", API_URL, number);
+        ApiRequest request = apiRequestQueue.request(new StationApiRequest(number));
 
-        Integer requestId = requestGet(url, null, new ResponseParcelable() {
-            @Override
-            public Parcelable newInstance(JSONObject jsonObject) {
-                return new StationModel(jsonObject);
-            }
-        });
-        requestTypes.put(requestId, RequestType.STATION);
-        return requestId;
+//        if (cacheService != null)
+//            cacheService.requestStation(request.id);
+
+        return request.id;
     }
 
     public Integer requestStationList() {
-        String url = String.format("%s/station", API_URL);
-
-        Integer requestId = requestGet(url, null, new ResponseParcelable() {
-            @Override
-            public Parcelable newInstance(JSONObject jsonObject) {
-                return new StationList(jsonObject);
-            }
-        });
+        ApiRequest request = apiRequestQueue.request(new StationListApiRequest());
 
         if (cacheService != null)
-            cacheService.requestStationList(requestId);
+            cacheService.requestStationList(request.id);
 
-        requestTypes.put(requestId, RequestType.STATION_LIST);
-        return requestId;
+        return request.id;
     }
 
     @Override
@@ -113,12 +84,14 @@ public class ApiService extends NetworkService {
         bindService(cacheServiceIntent, cacheServiceConnection, Context.BIND_AUTO_CREATE);
 
         broadcastManager.registerReceiver(responseReceiver, new IntentFilter(NetworkService.RESPONSE));
+
+        apiRequestQueue = new ApiRequestQueue(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(stopSelfTimer != null) {
+        if (stopSelfTimer != null) {
             stopSelfTimer.destroy();
         }
 
@@ -131,7 +104,7 @@ public class ApiService extends NetworkService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(stopSelfTimer == null) stopSelfTimer = new Timer();
+        if (stopSelfTimer == null) stopSelfTimer = new Timer();
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -143,7 +116,7 @@ public class ApiService extends NetworkService {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        if(stopSelfTimer == null) return false;
+        if (stopSelfTimer == null) return false;
 
         stopSelfTimer.setStop(new Timer.Stop() {
             @Override

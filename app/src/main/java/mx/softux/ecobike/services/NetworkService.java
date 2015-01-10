@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import mx.softux.ecobike.P;
 import mx.softux.ecobike.utilities.LogUtils;
 
-public abstract class NetworkService extends Service {
+public abstract class NetworkService extends Service implements NetworkServiceInterface {
     private static final String TAG = NetworkService.class.getSimpleName();
 
     protected static final String RESPONSE = "RESPONSE";
@@ -51,7 +51,8 @@ public abstract class NetworkService extends Service {
         return request(Request.Method.POST, url, jsonObject, responseParcelable);
     }
 
-    protected Integer request(int method, String url, JSONObject jsonRequest, final ResponseParcelable responseParcelable) {
+    @Override
+    public Integer request(int method, String url, JSONObject jsonRequest, final ResponseParcelable responseParcelable) {
         final Integer i = sequence.incrementAndGet();
 
         JsonObjectRequest request = new JsonObjectRequest(method, url, jsonRequest, new com.android.volley.Response.Listener<JSONObject>() {
@@ -82,7 +83,7 @@ public abstract class NetworkService extends Service {
         broadcastManager.sendBroadcast(intent);
     }
 
-    protected Response getResponse(Integer requestId) {
+    public Response getResponse(Integer requestId) {
         if (!responses.containsKey(requestId)) {
             return new Response();
         }
@@ -95,7 +96,7 @@ public abstract class NetworkService extends Service {
         queue.cancelAll(requestId);
     }
 
-    protected static class Response {
+    public static class Response {
         public static final int UNKNOWN = 0;
         public static final int OK = 1;
         public static final int ERROR = 2;
@@ -133,7 +134,7 @@ public abstract class NetworkService extends Service {
         }
     }
 
-    protected interface ResponseParcelable {
+    public static interface ResponseParcelable {
         public Parcelable newInstance(JSONObject jsonObject);
     }
 }
