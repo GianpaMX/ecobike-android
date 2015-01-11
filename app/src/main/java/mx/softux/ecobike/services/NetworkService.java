@@ -125,6 +125,11 @@ public abstract class NetworkService extends Service implements NetworkServiceIn
             this.status = status;
         }
 
+
+        public boolean isOk() {
+            return status == Response.OK;
+        }
+
         public Parcelable getParcelable() {
             return parcelable;
         }

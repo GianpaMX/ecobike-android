@@ -13,7 +13,7 @@ import mx.softux.ecobike.P;
 import mx.softux.ecobike.model.StationList;
 import mx.softux.ecobike.model.StationModel;
 import mx.softux.ecobike.services.api.ApiRequest;
-import mx.softux.ecobike.services.api.ApiRequestQueue;
+import mx.softux.ecobike.services.api.ApiRequestPool;
 import mx.softux.ecobike.services.api.StationApiRequest;
 import mx.softux.ecobike.services.api.StationListApiRequest;
 import mx.softux.ecobike.utilities.LogUtils;
@@ -30,22 +30,22 @@ public class ApiService extends NetworkService {
 
     private CacheService cacheService;
 
-    private ApiRequestQueue apiRequestQueue;
+    private ApiRequestPool apiRequestPool;
 
     private BroadcastReceiver responseReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ApiRequest apiRequest = apiRequestQueue.findRequest(intent.getIntExtra(P.NetwrokService.REQUEST_ID, 0));
-            if(apiRequest == null) {
+            ApiRequest apiRequest = apiRequestPool.retriveRequest((Integer) intent.getExtras().get(P.NetwrokService.REQUEST_ID));
+            if (apiRequest == null) {
                 return;
             }
 
             Response response = apiRequest.response;
 
-            if (apiRequest instanceof StationApiRequest && response.getStatus() == Response.OK) {
+            if (apiRequest instanceof StationApiRequest && response.isOk()) {
                 StationModel station = (StationModel) response.getParcelable();
                 BroadcastManagerHelper.sendStation(station, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
-            } else if (apiRequest instanceof StationListApiRequest && response.getStatus() == Response.OK) {
+            } else if (apiRequest instanceof StationListApiRequest && response.isOk()) {
                 StationList stationList = (StationList) response.getParcelable();
                 if (cacheService != null)
                     cacheService.saveStationList(stationList);
@@ -60,21 +60,11 @@ public class ApiService extends NetworkService {
     };
 
     public ApiRequest requestStation(int number) {
-        ApiRequest request = apiRequestQueue.request(new StationApiRequest(number));
-
-//        if (cacheService != null)
-//            cacheService.requestStation(request.id);
-
-        return request;
+        return apiRequestPool.request(new StationApiRequest(number));
     }
 
     public ApiRequest requestStationList() {
-        ApiRequest request = apiRequestQueue.request(new StationListApiRequest());
-
-        if (cacheService != null)
-            cacheService.requestStationList(request.id);
-
-        return request;
+        return apiRequestPool.request(new StationListApiRequest());
     }
 
     @Override
@@ -87,7 +77,7 @@ public class ApiService extends NetworkService {
 
         broadcastManager.registerReceiver(responseReceiver, new IntentFilter(NetworkService.RESPONSE));
 
-        apiRequestQueue = new ApiRequestQueue(this);
+        apiRequestPool = new ApiRequestPool(this);
     }
 
     @Override
@@ -142,21 +132,19 @@ public class ApiService extends NetworkService {
         }
     }
 
-    private static enum RequestType {
-        STATION,
-        STATION_LIST
-    }
-
     private ServiceConnection cacheServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             CacheService.Binder binder = (CacheService.Binder) service;
             cacheService = binder.getCacheService();
+
+            apiRequestPool.setCacheService(cacheService);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             cacheService = null;
+            apiRequestPool.setCacheService(null);
         }
     };
 }

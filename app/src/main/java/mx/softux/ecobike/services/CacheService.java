@@ -13,6 +13,8 @@ import java.io.File;
 import mx.softux.ecobike.BroadcastManagerHelper;
 import mx.softux.ecobike.model.StationList;
 import mx.softux.ecobike.model.StationModel;
+import mx.softux.ecobike.services.api.ApiRequest;
+import mx.softux.ecobike.services.api.StationListApiRequest;
 import mx.softux.ecobike.utilities.CacheUtilities;
 import mx.softux.ecobike.utilities.LogUtils;
 
@@ -55,7 +57,7 @@ public class CacheService extends Service {
 
     }
 
-    public void requestStationList(final Integer requestId) {
+    private void requestStationList(final Integer requestId) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -79,6 +81,11 @@ public class CacheService extends Service {
                 return null;
             }
         }.execute();
+    }
+
+    public void request(ApiRequest apiRequest) {
+        if (apiRequest instanceof StationListApiRequest)
+            requestStationList(apiRequest.id);
     }
 
     public class Binder extends android.os.Binder {

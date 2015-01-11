@@ -5,30 +5,42 @@ import android.os.Handler;
 import java.util.ArrayList;
 import java.util.List;
 
+import mx.softux.ecobike.services.CacheService;
 import mx.softux.ecobike.services.NetworkServiceInterface;
 import mx.softux.ecobike.utilities.LogUtils;
 
 /**
  * Created by gianpa on 1/10/15.
  */
-public class ApiRequestQueue {
+public class ApiRequestPool {
     private static final long TIMEOUT = 10 * 1000;
-    private static final String TAG = ApiRequestQueue.class.getSimpleName();
+    private static final String TAG = ApiRequestPool.class.getSimpleName();
 
     NetworkServiceInterface networkService;
+    private CacheService cacheService;
+
     private List<ApiRequest> queue;
 
-    public ApiRequestQueue(NetworkServiceInterface networkService) {
+    public ApiRequestPool(NetworkServiceInterface networkService) {
         queue = new ArrayList<ApiRequest>();
         this.networkService = networkService;
     }
 
     public ApiRequest request(final ApiRequest request) {
-        if (queue.contains(request))
-            return queue.get(queue.indexOf(request));
+        if (queue.contains(request)) {
+            ApiRequest existingRequest = queue.get(queue.indexOf(request));
+
+            if (cacheService != null)
+                cacheService.request(existingRequest);
+
+            return existingRequest;
+        }
 
         request.id = networkService.request(request.getMethod(), request.getUrl(), request.getJsonRequest(), request.getParcelable());
         queue.add(request);
+
+        if (cacheService != null)
+            cacheService.request(request);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -44,7 +56,9 @@ public class ApiRequestQueue {
         return request;
     }
 
-    public ApiRequest findRequest(int requestId) {
+    public ApiRequest retriveRequest(Integer requestId) {
+        if (requestId == null) return null;
+
         for (int i = 0; i < queue.size(); i++) {
             if (queue.get(i).id == requestId) {
                 ApiRequest request = queue.get(i);
@@ -57,5 +71,9 @@ public class ApiRequestQueue {
         }
 
         return null;
+    }
+
+    public void setCacheService(CacheService cacheService) {
+        this.cacheService = cacheService;
     }
 }

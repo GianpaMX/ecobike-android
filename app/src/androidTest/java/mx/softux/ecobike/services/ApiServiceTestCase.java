@@ -127,7 +127,7 @@ public class ApiServiceTestCase extends ServiceTestCase<MockApiService> {
 //            private StationModel response;
 //
 //            @Override
-//            public void findRequest(Model model) {
+//            public void retriveRequest(Model model) {
 //                response = (StationModel) model;
 //            }
 //
