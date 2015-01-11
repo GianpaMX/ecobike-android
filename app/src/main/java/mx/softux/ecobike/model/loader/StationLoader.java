@@ -9,6 +9,7 @@ import mx.softux.ecobike.model.Model;
 import mx.softux.ecobike.model.StationModel;
 import mx.softux.ecobike.services.ApiService;
 import mx.softux.ecobike.services.api.ApiRequest;
+import mx.softux.ecobike.services.api.StationApiRequest;
 
 /**
  * Created by gianpa on 11/17/14.
@@ -31,7 +32,7 @@ public class StationLoader extends ModelLoader<StationModel> {
         if (station != null) {
             deliverResult(station);
         } else {
-            request = apiService.requestStation(number);
+            request = apiService.request(new StationApiRequest(number));
         }
 
         registerReceiver(stationBroadcastReceiver, Model.Station.READY);
@@ -53,7 +54,7 @@ public class StationLoader extends ModelLoader<StationModel> {
         cancelRequest(request);
 
         if (apiService != null)
-            request = apiService.requestStation(number);
+            request = apiService.request(new StationApiRequest(number));
 
         super.onForceLoad();
     }

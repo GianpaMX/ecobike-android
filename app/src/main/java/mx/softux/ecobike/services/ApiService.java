@@ -59,12 +59,8 @@ public class ApiService extends NetworkService {
         }
     };
 
-    public ApiRequest requestStation(int number) {
-        return apiRequestPool.request(new StationApiRequest(number));
-    }
-
-    public ApiRequest requestStationList() {
-        return apiRequestPool.request(new StationListApiRequest());
+    public ApiRequest request(ApiRequest apiRequest) {
+        return apiRequestPool.request(apiRequest);
     }
 
     @Override
