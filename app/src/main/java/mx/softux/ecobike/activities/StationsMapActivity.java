@@ -161,6 +161,8 @@ public class StationsMapActivity extends StationsActivity implements ObservableS
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_stations_map, menu);
         return true;

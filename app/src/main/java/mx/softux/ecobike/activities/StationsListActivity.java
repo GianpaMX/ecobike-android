@@ -24,6 +24,8 @@ public class StationsListActivity extends StationsActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_stations_list, menu);
         return true;

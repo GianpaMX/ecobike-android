@@ -43,10 +43,10 @@ public class ApiService extends NetworkService {
             Response response = apiRequest.response;
 
             if (apiRequest instanceof StationApiRequest && response.isOk()) {
-                StationModel station = (StationModel) response.getParcelable();
+                StationModel station = (StationModel) response.parcelable;
                 BroadcastManagerHelper.sendStation(station, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
             } else if (apiRequest instanceof StationListApiRequest && response.isOk()) {
-                StationList stationList = (StationList) response.getParcelable();
+                StationList stationList = (StationList) response.parcelable;
                 if (cacheService != null)
                     cacheService.saveStationList(stationList);
                 for (StationModel station : stationList) {
@@ -54,7 +54,7 @@ public class ApiService extends NetworkService {
                 }
                 BroadcastManagerHelper.sendStationList(stationList, apiRequest.id, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
             } else {
-
+                BroadcastManagerHelper.sendError(apiRequest, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
             }
         }
     };
@@ -85,7 +85,7 @@ public class ApiService extends NetworkService {
 
         if (cacheService != null) unbindService(cacheServiceConnection);
 
-        unregisterReceiver(responseReceiver);
+        broadcastManager.unregisterReceiver(responseReceiver);
 
         LogUtils.LOGD(TAG, "onDestroy");
     }
@@ -120,6 +120,12 @@ public class ApiService extends NetworkService {
     public void onRebind(Intent intent) {
         super.onRebind(intent);
         stopSelfTimer.cancel();
+    }
+
+    public void cancelRequest(ApiRequest request) {
+        apiRequestPool.cancel(request);
+
+        super.cancelRequest(request.id);
     }
 
     public class Binder extends android.os.Binder {

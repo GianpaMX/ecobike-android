@@ -1,5 +1,6 @@
 package mx.softux.ecobike.services.api;
 
+import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.android.volley.Request;
@@ -13,6 +14,12 @@ import mx.softux.ecobike.services.NetworkService;
  * Created by gianpa on 1/10/15.
  */
 public class StationListApiRequest extends ApiRequest {
+    public StationListApiRequest() {
+    }
+
+    public StationListApiRequest(Parcel parcel) {
+    }
+
     @Override
     public int getMethod() {
         return Request.Method.GET;
@@ -48,5 +55,15 @@ public class StationListApiRequest extends ApiRequest {
     @Override
     public int hashCode() {
         return 13;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

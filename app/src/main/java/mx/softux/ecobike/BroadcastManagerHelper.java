@@ -7,6 +7,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import mx.softux.ecobike.model.Model;
 import mx.softux.ecobike.model.StationList;
 import mx.softux.ecobike.model.StationModel;
+import mx.softux.ecobike.services.api.ApiRequest;
 
 /**
  * Created by gianpa on 12/30/14.
@@ -33,4 +34,11 @@ public class BroadcastManagerHelper {
         broadcastManager.sendBroadcast(stationIntent);
     }
 
+    public static void sendError(ApiRequest apiRequest, BroadcastSource source, LocalBroadcastManager broadcastManager) {
+        Intent stationIntent = new Intent(Model.ERROR);
+        stationIntent.putExtra(P.BROADCAST_SOURCE, source);
+        stationIntent.putExtra(P.ApiService.REQUEST, apiRequest);
+        broadcastManager.sendBroadcast(stationIntent);
+
+    }
 }

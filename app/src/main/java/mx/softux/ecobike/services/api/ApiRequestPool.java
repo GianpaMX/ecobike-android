@@ -56,21 +56,31 @@ public class ApiRequestPool {
         return request;
     }
 
+    public void cancel(ApiRequest apiRequest) {
+        queue.remove(apiRequest);
+    }
+
     public ApiRequest retriveRequest(Integer requestId) {
         if (requestId == null) return null;
 
+        int index = indexOf(requestId);
+        if (index == -1) return null;
+
+        ApiRequest request = queue.get(index);
+        queue.remove(index);
+
+        request.response = networkService.getResponse(requestId);
+
+        return request;
+    }
+
+    private int indexOf(int requestId) {
         for (int i = 0; i < queue.size(); i++) {
             if (queue.get(i).id == requestId) {
-                ApiRequest request = queue.get(i);
-
-                queue.remove(i);
-
-                request.response = networkService.getResponse(requestId);
-                return request;
+                return i;
             }
         }
-
-        return null;
+        return -1;
     }
 
     public void setCacheService(CacheService cacheService) {

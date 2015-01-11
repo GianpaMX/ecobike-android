@@ -14,6 +14,10 @@ public class P {
         public static final String STATION_UPDATE_TIME = "STATION_UPDATE_TIME";
     }
 
+    public static class ApiService {
+        public static  final String REQUEST = "REQUEST";
+    }
+
     public static class NetwrokService {
         public static final String REQUEST_ID = "REQUEST_ID";
     }

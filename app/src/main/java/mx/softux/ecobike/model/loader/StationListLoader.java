@@ -3,7 +3,9 @@ package mx.softux.ecobike.model.loader;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 
+import mx.softux.ecobike.BroadcastManagerHelper;
 import mx.softux.ecobike.P;
 import mx.softux.ecobike.model.Model;
 import mx.softux.ecobike.model.StationList;
@@ -17,6 +19,7 @@ import mx.softux.ecobike.services.api.StationListApiRequest;
 public class StationListLoader extends ModelLoader<StationList> {
     private StationList stationList = null;
     private ApiRequest request;
+    private Exception error;
 
     public StationListLoader(ApiService apiService, Context context) {
         super(apiService, context);
@@ -33,11 +36,13 @@ public class StationListLoader extends ModelLoader<StationList> {
         }
 
         registerReceiver(stationListBroadcastReceiver, Model.StationList.READY);
+        registerReceiver(errorBroadcastReceiver, Model.ERROR);
     }
 
     @Override
     protected void onReset() {
         unregisterReceiver(stationListBroadcastReceiver);
+        unregisterReceiver(errorBroadcastReceiver);
         cancelRequest(request);
 
         stationList = null;
@@ -62,9 +67,35 @@ public class StationListLoader extends ModelLoader<StationList> {
                 return;
             }
 
+            if (intent.getExtras().get(P.BROADCAST_SOURCE) == BroadcastManagerHelper.BroadcastSource.NETWORK) {
+                request = null;
+                error = null;
+            }
+
             stationList = intent.getExtras().getParcelable(P.StationList.STATION_LIST);
 
             if (isStarted() && stationList != null) deliverResult(stationList);
         }
     };
+
+    private BroadcastReceiver errorBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (isAbandoned() || request == null) {
+                return;
+            }
+
+            Parcelable request = intent.getExtras().getParcelable(P.ApiService.REQUEST);
+            if (request instanceof StationListApiRequest) {
+                error = ((StationListApiRequest) request).response.error;
+
+                if (isStarted())
+                    deliverResult(null);
+            }
+        }
+    };
+
+    public Exception getError() {
+        return error;
+    }
 }

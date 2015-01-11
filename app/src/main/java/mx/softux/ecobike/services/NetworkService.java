@@ -3,6 +3,7 @@ package mx.softux.ecobike.services;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -58,7 +59,7 @@ public abstract class NetworkService extends Service implements NetworkServiceIn
         JsonObjectRequest request = new JsonObjectRequest(method, url, jsonRequest, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject jsonObject) {
-                responses.put(i, new Response(Response.OK, responseParcelable.newInstance(jsonObject)));
+                responses.put(i, new Response(Response.Status.OK, responseParcelable.newInstance(jsonObject)));
                 notifyResponse(i);
             }
 
@@ -66,7 +67,7 @@ public abstract class NetworkService extends Service implements NetworkServiceIn
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 LogUtils.LOGE(TAG, "onErrorResponse", volleyError);
-                responses.put(i, new Response(Response.ERROR));
+                responses.put(i, new Response(Response.Status.ERROR, null, volleyError));
                 notifyResponse(i);
             }
         });
@@ -96,46 +97,55 @@ public abstract class NetworkService extends Service implements NetworkServiceIn
         queue.cancelAll(requestId);
     }
 
-    public static class Response {
-        public static final int UNKNOWN = 0;
-        public static final int OK = 1;
-        public static final int ERROR = 2;
-
-        private int status;
-        private Parcelable parcelable;
-
-        public Response(int status, Parcelable parcelable) {
-            this.status = status;
-            this.parcelable = parcelable;
+    public static class Response implements Parcelable {
+        public static enum Status {
+            UNKNOWN,
+            OK,
+            ERROR
         }
 
-        public Response(int status) {
+        public Status status;
+        public Parcelable parcelable;
+        public Exception error;
+
+        public Response(Status status, Parcelable parcelable, Exception error) {
+            this.status = status;
+            this.parcelable = parcelable;
+            this.error = error;
+        }
+
+        public Response(Status status, Parcelable parcelable) {
+            this(status, parcelable, null);
+        }
+
+        public Response(Status status) {
             this(status, null);
         }
 
         public Response() {
-            this(UNKNOWN, null);
+            this(Status.UNKNOWN, null);
         }
 
-        public int getStatus() {
-            return status;
+        public Response(Parcel source) {
+            status = (Status) source.readSerializable();
+            parcelable = source.readParcelable(null);
+            error = (Exception) source.readSerializable();
         }
-
-        public void setStatus(int status) {
-            this.status = status;
-        }
-
 
         public boolean isOk() {
-            return status == Response.OK;
+            return status == Status.OK;
         }
 
-        public Parcelable getParcelable() {
-            return parcelable;
+        @Override
+        public int describeContents() {
+            return 0;
         }
 
-        public void setParcelable(Parcelable parcelable) {
-            this.parcelable = parcelable;
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeSerializable(status);
+            dest.writeParcelable(parcelable, flags);
+            dest.writeSerializable(error);
         }
     }
 

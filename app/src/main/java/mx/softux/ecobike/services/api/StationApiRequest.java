@@ -1,5 +1,6 @@
 package mx.softux.ecobike.services.api;
 
+import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.android.volley.Request;
@@ -14,6 +15,10 @@ import mx.softux.ecobike.services.NetworkService;
  */
 public class StationApiRequest extends ApiRequest {
     public int number;
+
+    public StationApiRequest(Parcel parcel) {
+        number = parcel.readInt();
+    }
 
     public StationApiRequest(int number) {
         this.number = number;
@@ -59,5 +64,15 @@ public class StationApiRequest extends ApiRequest {
     @Override
     public int hashCode() {
         return number;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(number);
     }
 }

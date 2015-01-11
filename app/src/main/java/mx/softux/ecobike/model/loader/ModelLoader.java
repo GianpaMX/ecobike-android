@@ -15,6 +15,7 @@ import mx.softux.ecobike.services.api.ApiRequest;
 public abstract class ModelLoader<D> extends Loader<D> {
     private LocalBroadcastManager broadcastManager = null;
     protected ApiService apiService = null;
+    protected Exception error;
 
     public ModelLoader(ApiService apiService, Context context) {
         super(context);
@@ -49,7 +50,11 @@ public abstract class ModelLoader<D> extends Loader<D> {
 
     protected void cancelRequest(ApiRequest request) {
         if (apiService != null && request != null) {
-            apiService.cancelRequest(request.id);
+            apiService.cancelRequest(request);
         }
+    }
+
+    public Exception getError() {
+        return error;
     }
 }

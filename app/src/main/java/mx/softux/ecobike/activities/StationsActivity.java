@@ -8,9 +8,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.MenuItem;
 
-import mx.softux.ecobike.services.ApiService;
 import mx.softux.ecobike.ApiServiceConnection;
 import mx.softux.ecobike.R;
+import mx.softux.ecobike.services.ApiService;
 
 /**
  * Created by gianpa on 12/29/14.
