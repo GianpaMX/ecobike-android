@@ -35,9 +35,11 @@ public class ApiService extends NetworkService {
     private BroadcastReceiver responseReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int requestId = intent.getIntExtra(P.NetwrokService.REQUEST_ID, 0);
+            ApiRequest apiRequest = apiRequestQueue.findRequest(intent.getIntExtra(P.NetwrokService.REQUEST_ID, 0));
+            if(apiRequest == null) {
+                return;
+            }
 
-            ApiRequest apiRequest = apiRequestQueue.onResponse(requestId);
             Response response = apiRequest.response;
 
             if (apiRequest instanceof StationApiRequest && response.getStatus() == Response.OK) {
@@ -50,29 +52,29 @@ public class ApiService extends NetworkService {
                 for (StationModel station : stationList) {
                     BroadcastManagerHelper.sendStation(station, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
                 }
-                BroadcastManagerHelper.sendStationList(stationList, requestId, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
+                BroadcastManagerHelper.sendStationList(stationList, apiRequest.id, BroadcastManagerHelper.BroadcastSource.NETWORK, broadcastManager);
             } else {
 
             }
         }
     };
 
-    public Integer requestStation(int number) {
+    public ApiRequest requestStation(int number) {
         ApiRequest request = apiRequestQueue.request(new StationApiRequest(number));
 
 //        if (cacheService != null)
 //            cacheService.requestStation(request.id);
 
-        return request.id;
+        return request;
     }
 
-    public Integer requestStationList() {
+    public ApiRequest requestStationList() {
         ApiRequest request = apiRequestQueue.request(new StationListApiRequest());
 
         if (cacheService != null)
             cacheService.requestStationList(request.id);
 
-        return request.id;
+        return request;
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 
 import mx.softux.ecobike.services.ApiService;
+import mx.softux.ecobike.services.api.ApiRequest;
 
 /**
  * Created by gianpa on 12/26/14.
@@ -46,9 +47,9 @@ public abstract class ModelLoader<D> extends Loader<D> {
         broadcastManager = null;
     }
 
-    protected void cancelRequest(Integer requestId) {
-        if (apiService != null && requestId != null) {
-            apiService.cancelRequest(requestId);
+    protected void cancelRequest(ApiRequest request) {
+        if (apiService != null && request != null) {
+            apiService.cancelRequest(request.id);
         }
     }
 }

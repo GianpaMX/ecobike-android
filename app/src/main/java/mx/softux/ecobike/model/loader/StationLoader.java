@@ -8,6 +8,7 @@ import mx.softux.ecobike.P;
 import mx.softux.ecobike.model.Model;
 import mx.softux.ecobike.model.StationModel;
 import mx.softux.ecobike.services.ApiService;
+import mx.softux.ecobike.services.api.ApiRequest;
 
 /**
  * Created by gianpa on 11/17/14.
@@ -15,7 +16,7 @@ import mx.softux.ecobike.services.ApiService;
 public class StationLoader extends ModelLoader<StationModel> {
     private StationModel station = null;
     private final int number;
-    private Integer requestId;
+    private ApiRequest request;
 
     public StationLoader(int number, ApiService apiService, Context context) {
         super(apiService, context);
@@ -30,7 +31,7 @@ public class StationLoader extends ModelLoader<StationModel> {
         if (station != null) {
             deliverResult(station);
         } else {
-            requestId = apiService.requestStation(number);
+            request = apiService.requestStation(number);
         }
 
         registerReceiver(stationBroadcastReceiver, Model.Station.READY);
@@ -40,7 +41,7 @@ public class StationLoader extends ModelLoader<StationModel> {
     @Override
     protected void onReset() {
         unregisterReceiver(stationBroadcastReceiver);
-        cancelRequest(requestId);
+        cancelRequest(request);
 
         station = null;
 
@@ -49,10 +50,10 @@ public class StationLoader extends ModelLoader<StationModel> {
 
     @Override
     protected void onForceLoad() {
-        cancelRequest(requestId);
+        cancelRequest(request);
 
         if (apiService != null)
-            requestId = apiService.requestStation(number);
+            request = apiService.requestStation(number);
 
         super.onForceLoad();
     }
@@ -60,7 +61,7 @@ public class StationLoader extends ModelLoader<StationModel> {
     private BroadcastReceiver stationBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            requestId = null;
+            request = null;
 
             if (isAbandoned() || number != intent.getExtras().getInt(P.Station.STATION_NUMBER)) {
                 return;

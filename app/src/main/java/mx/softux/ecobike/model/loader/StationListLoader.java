@@ -8,13 +8,14 @@ import mx.softux.ecobike.P;
 import mx.softux.ecobike.model.Model;
 import mx.softux.ecobike.model.StationList;
 import mx.softux.ecobike.services.ApiService;
+import mx.softux.ecobike.services.api.ApiRequest;
 
 /**
  * Created by gianpa on 12/26/14.
  */
 public class StationListLoader extends ModelLoader<StationList> {
     private StationList stationList = null;
-    private Integer requestId;
+    private ApiRequest request;
 
     public StationListLoader(ApiService apiService, Context context) {
         super(apiService, context);
@@ -25,7 +26,7 @@ public class StationListLoader extends ModelLoader<StationList> {
         super.onStartLoading();
 
         if (stationList == null) {
-            requestId = apiService.requestStationList();
+            request = apiService.requestStationList();
         } else {
             deliverResult(stationList);
         }
@@ -36,7 +37,7 @@ public class StationListLoader extends ModelLoader<StationList> {
     @Override
     protected void onReset() {
         unregisterReceiver(stationListBroadcastReceiver);
-        cancelRequest(requestId);
+        cancelRequest(request);
 
         stationList = null;
 
@@ -45,10 +46,10 @@ public class StationListLoader extends ModelLoader<StationList> {
 
     @Override
     protected void onForceLoad() {
-        cancelRequest(requestId);
+        cancelRequest(request);
 
         if (apiService != null)
-            requestId = apiService.requestStationList();
+            request = apiService.requestStationList();
 
         super.onForceLoad();
     }
@@ -56,7 +57,7 @@ public class StationListLoader extends ModelLoader<StationList> {
     private BroadcastReceiver stationListBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (isAbandoned() || requestId == null || requestId != intent.getExtras().getInt(P.NetwrokService.REQUEST_ID)) {
+            if (isAbandoned() || request == null || request.id != intent.getExtras().getInt(P.NetwrokService.REQUEST_ID)) {
                 return;
             }
 
