@@ -8,17 +8,28 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.HashMap;
 
 import mx.softux.ecobike.ApiServiceConnection;
 import mx.softux.ecobike.R;
 import mx.softux.ecobike.model.StationList;
+import mx.softux.ecobike.model.StationModel;
 import mx.softux.ecobike.model.loader.ModelLoader;
 import mx.softux.ecobike.model.loader.StationListLoader;
 import mx.softux.ecobike.services.ApiService;
 
-public class StationsMapFragment extends SupportMapFragment implements LoaderManager.LoaderCallbacks<StationList>, ApiServiceConnection {
+public class StationsMapFragment extends SupportMapFragment implements LoaderManager.LoaderCallbacks<StationList>, ApiServiceConnection, OnMapReadyCallback {
     private ApiService apiService;
+    private GoogleMap map;
+    private StationList stationList;
+    private HashMap<Integer, Marker> markers;
 
     public static StationsMapFragment newInstance() {
         StationsMapFragment fragment = new StationsMapFragment();
@@ -28,6 +39,8 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
     public StationsMapFragment() {
         // Required empty public constructor
         super();
+
+        markers = new HashMap<Integer, Marker>();
     }
 
     @Override
@@ -35,6 +48,8 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
+
+        getMapAsync(this);
     }
 
     @Override
@@ -64,6 +79,35 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
         if (data == null && stationListLoader.getError() != null) {
             Toast.makeText(getActivity(), getString(R.string.request_error), Toast.LENGTH_LONG).show();
             return;
+        }
+
+        stationList = data;
+        updateMap();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        updateMap();
+    }
+
+    private void updateMap() {
+        if (map == null || stationList == null) return;
+
+        for (StationModel station : stationList) {
+            if (markers.containsKey(station.number)) {
+                Marker marker = markers.get(station.number);
+
+                marker.setPosition(new LatLng(station.location.x, station.location.y));
+                marker.setTitle(station.name);
+            } else {
+                MarkerOptions markerOptions = new MarkerOptions();
+
+                markerOptions.position(new LatLng(station.location.x, station.location.y));
+                markerOptions.title(station.name);
+
+                markers.put(station.number, map.addMarker(markerOptions));
+            }
         }
     }
 
