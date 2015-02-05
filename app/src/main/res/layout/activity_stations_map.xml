@@ -52,7 +52,7 @@
             android:paddingBottom="0dp"
             android:background="?attr/colorPrimary">
 
-            <include layout="@layout/toolbar_actionbar" />
+            <include layout="@layout/toolbar_actionbar" android:id="@+id/toolbar_actionbar" />
 
             <FrameLayout
                 android:id="@+id/header_details"

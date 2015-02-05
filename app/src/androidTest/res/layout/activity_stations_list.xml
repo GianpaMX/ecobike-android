@@ -13,5 +13,5 @@
         android:layout_weight="1"
         tools:layout="@android:layout/list_content" />
 
-    <include layout="@layout/toolbar_actionbar" />
+    <include layout="@layout/toolbar_actionbar" android:id="@+id/toolbar_actionbar" />
 </LinearLayout>
