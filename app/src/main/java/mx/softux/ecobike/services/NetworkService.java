@@ -7,6 +7,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -26,12 +27,14 @@ public abstract class NetworkService extends Service implements NetworkServiceIn
     private static final String TAG = NetworkService.class.getSimpleName();
 
     protected static final String RESPONSE = "RESPONSE";
+    public static final int SECOND = 1000;
 
     private RequestQueue queue;
 
     private Map<Integer, Response> responses = new HashMap<Integer, Response>();
     private AtomicInteger sequence = new AtomicInteger();
     protected LocalBroadcastManager broadcastManager;
+    private DefaultRetryPolicy defaultRetryPolicy;
 
     @Override
     public void onCreate() {
@@ -71,10 +74,17 @@ public abstract class NetworkService extends Service implements NetworkServiceIn
                 notifyResponse(i);
             }
         });
+        request.setRetryPolicy(getRetryPolicy());
         request.setTag(i);
 
         queue.add(request);
         return i;
+    }
+
+    protected DefaultRetryPolicy getRetryPolicy() {
+        if (defaultRetryPolicy == null)
+            defaultRetryPolicy = new DefaultRetryPolicy(5 * SECOND, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        return defaultRetryPolicy;
     }
 
     private void notifyResponse(Integer i) {
