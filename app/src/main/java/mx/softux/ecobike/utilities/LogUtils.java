@@ -19,6 +19,12 @@ public class LogUtils {
         }
     }
 
+    public static void LOGD(String tag, String message, Exception e) {
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, message, e);
+        }
+    }
+
     public static void LOGV(final String tag, String message) {
         if (BuildConfig.DEBUG) {
             Log.v(TAG + tag, message);
