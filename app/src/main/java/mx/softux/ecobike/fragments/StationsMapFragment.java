@@ -35,6 +35,7 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
     private GoogleMap map;
     private StationList stationList;
     private HashMap<Integer, Marker> markers;
+    private Integer selectedStationNumber;
 
     public static StationsMapFragment newInstance() {
         StationsMapFragment fragment = new StationsMapFragment();
@@ -104,6 +105,7 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
 
         minSWLat = minSWLng = maxNELat = maxNELng = null;
 
+        StationModel selectedStation = null;
         for (StationModel station : stationList) {
             Marker marker;
             if (markers.containsKey(station.number)) {
@@ -137,9 +139,16 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
                 minSWLng = marker.getPosition().longitude;
                 maxNELng = marker.getPosition().longitude;
             }
+
+            if (selectedStationNumber == station.number)
+                selectedStation = station;
         }
 
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLngBounds(new LatLng(minSWLat, minSWLng), new LatLng(maxNELat, maxNELng)).getCenter(), 10));
+        if (selectedStation != null) {
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(selectedStation.location.x, selectedStation.location.y), 13));
+        } else {
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLngBounds(new LatLng(minSWLat, minSWLng), new LatLng(maxNELat, maxNELng)).getCenter(), 17));
+        }
     }
 
     @Override
@@ -156,5 +165,9 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
     @Override
     public ApiService getApiService() {
         return apiService;
+    }
+
+    public void setSelectedStationNumber(Integer stationNumber) {
+        this.selectedStationNumber = stationNumber;
     }
 }

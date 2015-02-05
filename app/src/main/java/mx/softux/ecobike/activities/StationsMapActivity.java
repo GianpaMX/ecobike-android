@@ -18,6 +18,7 @@ import mx.softux.ecobike.ObservableScrollView;
 import mx.softux.ecobike.P;
 import mx.softux.ecobike.R;
 import mx.softux.ecobike.fragments.StationFragment;
+import mx.softux.ecobike.fragments.StationsMapFragment;
 import mx.softux.ecobike.services.ApiService;
 import mx.softux.ecobike.utilities.UIUtils;
 
@@ -83,6 +84,9 @@ public class StationsMapActivity extends StationsActivity implements ObservableS
                         .beginTransaction()
                         .add(R.id.header_details, StationFragment.newInstance(stationNumber))
                         .commit();
+
+                StationsMapFragment stationsMapFragment = (StationsMapFragment) getSupportFragmentManager().findFragmentById(R.id.stations_map_fragment);
+                stationsMapFragment.setSelectedStationNumber(stationNumber);
             }
         }
 
