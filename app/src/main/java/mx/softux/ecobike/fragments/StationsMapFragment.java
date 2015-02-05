@@ -8,10 +8,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -24,8 +26,11 @@ import mx.softux.ecobike.model.StationModel;
 import mx.softux.ecobike.model.loader.ModelLoader;
 import mx.softux.ecobike.model.loader.StationListLoader;
 import mx.softux.ecobike.services.ApiService;
+import mx.softux.ecobike.utilities.LogUtils;
 
 public class StationsMapFragment extends SupportMapFragment implements LoaderManager.LoaderCallbacks<StationList>, ApiServiceConnection, OnMapReadyCallback {
+    private static final String TAG = StationsMapFragment.class.getSimpleName();
+
     private ApiService apiService;
     private GoogleMap map;
     private StationList stationList;
@@ -94,9 +99,15 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
     private void updateMap() {
         if (map == null || stationList == null) return;
 
+        Double minSWLat, minSWLng;
+        Double maxNELat, maxNELng;
+
+        minSWLat = minSWLng = maxNELat = maxNELng = null;
+
         for (StationModel station : stationList) {
+            Marker marker;
             if (markers.containsKey(station.number)) {
-                Marker marker = markers.get(station.number);
+                marker = markers.get(station.number);
 
                 marker.setPosition(new LatLng(station.location.x, station.location.y));
                 marker.setTitle(station.name);
@@ -106,9 +117,29 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
                 markerOptions.position(new LatLng(station.location.x, station.location.y));
                 markerOptions.title(station.name);
 
-                markers.put(station.number, map.addMarker(markerOptions));
+                marker = map.addMarker(markerOptions);
+
+                markers.put(station.number, marker);
+            }
+
+            try {
+                minSWLat = marker.getPosition().latitude < minSWLat ? marker.getPosition().latitude : minSWLat;
+                minSWLng = marker.getPosition().longitude < minSWLng ? marker.getPosition().longitude : minSWLng;
+
+                maxNELat = marker.getPosition().latitude > maxNELat ? marker.getPosition().latitude : maxNELng;
+                minSWLng = marker.getPosition().longitude < minSWLng ? marker.getPosition().longitude : minSWLng;
+            } catch (NullPointerException e) {
+                LogUtils.LOGD(TAG, "first marker", e);
+
+                minSWLat = marker.getPosition().latitude;
+                maxNELat = marker.getPosition().latitude;
+
+                minSWLng = marker.getPosition().longitude;
+                maxNELng = marker.getPosition().longitude;
             }
         }
+
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLngBounds(new LatLng(minSWLat, minSWLng), new LatLng(maxNELat, maxNELng)).getCenter(), 10));
     }
 
     @Override
