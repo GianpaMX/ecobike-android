@@ -26,7 +26,6 @@ import mx.softux.ecobike.model.StationModel;
 import mx.softux.ecobike.model.loader.ModelLoader;
 import mx.softux.ecobike.model.loader.StationListLoader;
 import mx.softux.ecobike.services.ApiService;
-import mx.softux.ecobike.utilities.LogUtils;
 
 public class StationsMapFragment extends SupportMapFragment implements LoaderManager.LoaderCallbacks<StationList>, ApiServiceConnection, OnMapReadyCallback {
     private static final String TAG = StationsMapFragment.class.getSimpleName();
@@ -37,16 +36,16 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
     private HashMap<Integer, Marker> markers;
     private Integer selectedStationNumber;
 
-    public static StationsMapFragment newInstance() {
-        StationsMapFragment fragment = new StationsMapFragment();
-        return fragment;
-    }
-
     public StationsMapFragment() {
         // Required empty public constructor
         super();
 
         markers = new HashMap<Integer, Marker>();
+    }
+
+    public static StationsMapFragment newInstance() {
+        StationsMapFragment fragment = new StationsMapFragment();
+        return fragment;
     }
 
     @Override
@@ -124,21 +123,11 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
                 markers.put(station.number, marker);
             }
 
-            try {
-                minSWLat = marker.getPosition().latitude < minSWLat ? marker.getPosition().latitude : minSWLat;
-                minSWLng = marker.getPosition().longitude < minSWLng ? marker.getPosition().longitude : minSWLng;
+            minSWLat = (minSWLat == null || marker.getPosition().latitude < minSWLat) ? marker.getPosition().latitude : minSWLat;
+            minSWLng = (minSWLng == null || marker.getPosition().longitude < minSWLng) ? marker.getPosition().longitude : minSWLng;
 
-                maxNELat = marker.getPosition().latitude > maxNELat ? marker.getPosition().latitude : maxNELng;
-                minSWLng = marker.getPosition().longitude < minSWLng ? marker.getPosition().longitude : minSWLng;
-            } catch (NullPointerException e) {
-                LogUtils.LOGD(TAG, "first marker", e);
-
-                minSWLat = marker.getPosition().latitude;
-                maxNELat = marker.getPosition().latitude;
-
-                minSWLng = marker.getPosition().longitude;
-                maxNELng = marker.getPosition().longitude;
-            }
+            maxNELat = (maxNELng == null || marker.getPosition().latitude > maxNELat) ? marker.getPosition().latitude : maxNELng;
+            minSWLng = (minSWLng == null || marker.getPosition().longitude < minSWLng) ? marker.getPosition().longitude : minSWLng;
 
             if (selectedStationNumber == station.number)
                 selectedStation = station;
