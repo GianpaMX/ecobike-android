@@ -126,12 +126,22 @@ public class StationsMapFragment extends SupportMapFragment implements LoaderMan
             minSWLat = (minSWLat == null || marker.getPosition().latitude < minSWLat) ? marker.getPosition().latitude : minSWLat;
             minSWLng = (minSWLng == null || marker.getPosition().longitude < minSWLng) ? marker.getPosition().longitude : minSWLng;
 
-            maxNELat = (maxNELng == null || marker.getPosition().latitude > maxNELat) ? marker.getPosition().latitude : maxNELng;
-            minSWLng = (minSWLng == null || marker.getPosition().longitude < minSWLng) ? marker.getPosition().longitude : minSWLng;
+            maxNELat = (maxNELat == null || marker.getPosition().latitude > maxNELat) ? marker.getPosition().latitude : maxNELat;
+            maxNELng = (maxNELng == null || marker.getPosition().longitude < maxNELng) ? marker.getPosition().longitude : maxNELng;
 
             if (selectedStationNumber == station.number)
                 selectedStation = station;
         }
+
+        for(Integer stationNumber:markers.keySet()) {
+            if(!stationList.contains(stationNumber)) {
+                markers.get(stationNumber).remove();
+                markers.remove(stationNumber);
+            }
+        }
+
+        if(markers.keySet().size() == 0)
+            return;
 
         if (selectedStation != null) {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(selectedStation.location.x, selectedStation.location.y), 13));

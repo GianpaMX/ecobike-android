@@ -61,6 +61,15 @@ public class StationModel extends Model {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if(o instanceof Integer) {
+            return number == (Integer) o;
+        }
+
+        return super.equals(o);
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

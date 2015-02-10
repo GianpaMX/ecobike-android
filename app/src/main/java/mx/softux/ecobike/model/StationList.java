@@ -13,6 +13,17 @@ import mx.softux.ecobike.utilities.LogUtils;
  * Created by gianpa on 12/26/14.
  */
 public class StationList extends ModelList<StationModel> implements Parcelable {
+    public static final Parcelable.Creator<StationList> CREATOR = new Parcelable.Creator<StationList>() {
+        @Override
+        public StationList createFromParcel(Parcel source) {
+            return new StationList(source);
+        }
+
+        @Override
+        public StationList[] newArray(int size) {
+            return new StationList[size];
+        }
+    };
     private static final String TAG = StationList.class.getSimpleName();
 
     public StationList() {
@@ -30,22 +41,29 @@ public class StationList extends ModelList<StationModel> implements Parcelable {
         copyFrom(jsonObject);
     }
 
+    /**
+     * Searches this {@code ArrayList} for the specified object.
+     *
+     * @param object the object to search for.
+     * @return {@code true} if {@code object} is an element of this
+     * {@code ArrayList}, {@code false} otherwise
+     */
+    @Override
+    public boolean contains(Object object) {
+        if (!(object instanceof Integer))
+            return super.contains(object);
+
+        for (int i = 0; i < size(); i++) {
+            return get(i).equals(object);
+        }
+
+        return false;
+    }
+
     @Override
     public int describeContents() {
         return 0;
     }
-
-    public static final Parcelable.Creator<StationList> CREATOR = new Parcelable.Creator<StationList>() {
-        @Override
-        public StationList createFromParcel(Parcel source) {
-            return new StationList(source);
-        }
-
-        @Override
-        public StationList[] newArray(int size) {
-            return new StationList[size];
-        }
-    };
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
