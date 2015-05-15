@@ -1,0 +1,16 @@
+{
+    "id": "1",
+    "district": "CUA",
+    "lon": "-99.168051",
+    "lat": "19.433296",
+    "bikes": "2",
+    "slots": "25",
+    "zip": "06500",
+    "address": "001 - Río Balsas-Río Sena",
+    "addressNumber": "S/N",
+    "nearbyStations": "2,3,85",
+    "status": "OPN",
+    "name": "1 RIO BALSAS-RIO SENA",
+    "stationType": "BIKE,TPV"
+  }
+

@@ -23,8 +23,8 @@ import mx.softux.ecobike.ApiServiceConnection;
 import mx.softux.ecobike.R;
 import mx.softux.ecobike.model.StationList;
 import mx.softux.ecobike.model.StationModel;
-import mx.softux.ecobike.model.loader.ModelLoader;
-import mx.softux.ecobike.model.loader.StationListLoader;
+import mx.softux.ecobike.loader.ModelLoader;
+import mx.softux.ecobike.loader.StationListLoader;
 import mx.softux.ecobike.services.ApiService;
 
 public class StationsMapFragment extends SupportMapFragment implements LoaderManager.LoaderCallbacks<StationList>, ApiServiceConnection, OnMapReadyCallback {

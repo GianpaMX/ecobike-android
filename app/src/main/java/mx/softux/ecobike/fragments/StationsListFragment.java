@@ -18,8 +18,8 @@ import mx.softux.ecobike.R;
 import mx.softux.ecobike.StationListAdapter;
 import mx.softux.ecobike.activities.StationsMapActivity;
 import mx.softux.ecobike.model.StationList;
-import mx.softux.ecobike.model.loader.ModelLoader;
-import mx.softux.ecobike.model.loader.StationListLoader;
+import mx.softux.ecobike.loader.ModelLoader;
+import mx.softux.ecobike.loader.StationListLoader;
 import mx.softux.ecobike.services.ApiService;
 
 /**

@@ -1,4 +1,4 @@
-package mx.softux.ecobike.model.loader;
+package mx.softux.ecobike.loader;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

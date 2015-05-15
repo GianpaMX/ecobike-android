@@ -17,7 +17,7 @@ import mx.softux.ecobike.ApiServiceConnection;
 import mx.softux.ecobike.P;
 import mx.softux.ecobike.R;
 import mx.softux.ecobike.model.StationModel;
-import mx.softux.ecobike.model.loader.StationLoader;
+import mx.softux.ecobike.loader.StationLoader;
 import mx.softux.ecobike.services.ApiService;
 
 public class StationFragment extends Fragment implements LoaderManager.LoaderCallbacks<StationModel>, ApiServiceConnection {
