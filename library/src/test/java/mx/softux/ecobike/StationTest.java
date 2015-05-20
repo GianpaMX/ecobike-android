@@ -9,7 +9,7 @@ import java.io.InputStream;
 /**
  * Created by gianpa on 5/15/15.
  */
-public class StatusTest {
+public class StationTest {
     @Test
     public void createStation() {
         Station station = new Station();
@@ -19,12 +19,16 @@ public class StatusTest {
     @Test
     public void statiomFromFile() {
         try {
-            InputStream inputStream = Resources.getInstance().getResourceAsStream("json/station.json");
-            Assert.assertNotNull("InputStream shoudn't be null", inputStream);
+            InputStream inputStream = Resources.getResourceAsStream("json/station.json");
+
+            Station station = Station.fromStream(inputStream);
+
             inputStream.close();
+
+            Assert.assertTrue(station instanceof Station);
         } catch (IOException e) {
             e.printStackTrace();
-            Assert.fail("IOException");
+            Assert.fail("InputStream.close()");
         }
     }
 }
