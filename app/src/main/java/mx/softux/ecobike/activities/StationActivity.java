@@ -2,6 +2,7 @@ package mx.softux.ecobike.activities;
 
 import android.content.Intent;
 
+import mx.softux.ecobike.P;
 import mx.softux.ecobike.R;
 
 /**
@@ -14,6 +15,8 @@ public class StationActivity extends AbstractAppCompatActivity {
     }
 
     public static Intent newIntent(int number) {
-        return null;
+        Intent intent = new Intent();
+        intent.putExtra(P.StationActivity.NUMBER, number);
+        return intent;
     }
 }
