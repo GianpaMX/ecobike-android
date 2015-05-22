@@ -4,39 +4,12 @@
     <color name="primary_dark">@color/md_purple_700</color>
     <color name="accent">@color/md_pink_A200</color>
 
-
     <color name="body_text_1">#de000000</color>
-    <color name="body_text_2">#8a000000</color>
 
-    <!-- purples -->
-    <color name="md_purple_50">#f3e5f5</color>
-    <color name="md_purple_100">#e1bee7</color>
-    <color name="md_purple_200">#ce93d8</color>
-    <color name="md_purple_300">#ba68c8</color>
-    <color name="md_purple_400">#ab47bc</color>
+    <color name="white">#ffffff</color>
+
     <color name="md_purple_500">#9c27b0</color>
-    <color name="md_purple_600">#8e24aa</color>
     <color name="md_purple_700">#7b1fa2</color>
-    <color name="md_purple_800">#6a1b9a</color>
-    <color name="md_purple_900">#4a148c</color>
-    <color name="md_purple_A100">#ea80fc</color>
-    <color name="md_purple_A200">#e040fb</color>
-    <color name="md_purple_A400">#d500f9</color>
-    <color name="md_purple_A700">#aa00ff</color>
 
-    <!-- pinks -->
-    <color name="md_pink_50">#fce4ec</color>
-    <color name="md_pink_100">#f8bbd0</color>
-    <color name="md_pink_200">#f48fb1</color>
-    <color name="md_pink_300">#f06292</color>
-    <color name="md_pink_400">#ec407a</color>
-    <color name="md_pink_500">#e91e63</color>
-    <color name="md_pink_600">#d81b60</color>
-    <color name="md_pink_700">#c2185b</color>
-    <color name="md_pink_800">#ad1457</color>
-    <color name="md_pink_900">#880e4f</color>
-    <color name="md_pink_A100">#ff80ab</color>
     <color name="md_pink_A200">#ff4081</color>
-    <color name="md_pink_A400">#f50057</color>
-    <color name="md_pink_A700">#c51162</color>
 </resources>
