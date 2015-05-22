@@ -11,6 +11,7 @@ import mx.softux.ecobike.P;
 import mx.softux.ecobike.R;
 
 import static mx.softux.EspressoMatchers.matchToolbarTitle;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
 
 /**
@@ -38,5 +39,17 @@ public class StationActivityTest extends ActivityInstrumentationTestCase2<Statio
         Assert.assertNotNull(intent.getExtras());
         Assert.assertTrue(intent.getExtras().containsKey(P.StationActivity.NUMBER));
         Assert.assertEquals(number, intent.getIntExtra(P.StationActivity.NUMBER, -1));
+    }
+
+    @Test
+    public void testSpecificStationActivityTitle() {
+        final int number = 1;
+
+        Intent intent = StationActivity.newIntent(number);
+        setActivityIntent(intent);
+        getActivity();
+
+        String title = InstrumentationRegistry.getTargetContext().getString(R.string.activity_station_title, number);
+        matchToolbarTitle(is(title));
     }
 }
