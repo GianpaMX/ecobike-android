@@ -1,11 +1,13 @@
 package mx.softux.ecobike.activities;
 
+import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
 
+import mx.softux.ecobike.P;
 import mx.softux.ecobike.R;
 
 import static mx.softux.EspressoMatchers.matchToolbarTitle;
@@ -19,16 +21,22 @@ public class StationActivityTest extends ActivityInstrumentationTestCase2<Statio
         super(StationActivity.class);
     }
 
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    @Test
+    public void testActivityTitle() {
         getActivity();
+        String title = InstrumentationRegistry.getTargetContext().getString(R.string.text_station);
+        matchToolbarTitle(startsWith(title));
     }
 
     @Test
-    public void testActivityTitle() {
-        String title = InstrumentationRegistry.getTargetContext().getString(R.string.text_station);
-        matchToolbarTitle(startsWith(title));
+    public void testNewIntent() {
+        final int number = 1;
+
+        Intent intent = StationActivity.newIntent(number);
+
+        Assert.assertNotNull(intent);
+        Assert.assertNotNull(intent.getExtras());
+        Assert.assertTrue(intent.getExtras().containsKey(P.StationActivity.NUMBER));
+        Assert.assertEquals(number, intent.getIntExtra(P.StationActivity.NUMBER, -1));
     }
 }
