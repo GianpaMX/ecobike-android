@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">Ecobike</string>
     <string name="text_station">Station</string>
+
+    <string name="station_activity_title">Station %1$d</string>
 </resources>
