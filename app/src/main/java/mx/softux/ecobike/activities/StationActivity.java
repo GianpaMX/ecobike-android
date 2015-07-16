@@ -6,13 +6,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import mx.softux.ecobike.P;
 import mx.softux.ecobike.R;
@@ -21,8 +23,12 @@ import mx.softux.ecobike.library.Station;
 /**
  * Created by juan on 5/21/15.
  */
-public class StationActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class StationActivity extends AppCompatActivity {
+    private static final String TAG = StationActivity.class.getSimpleName();
+
     private Toolbar actionBarToolbar;
+    private MapView mapView;
+
     private Station station = new Station();
 
     @Override
@@ -39,8 +45,22 @@ public class StationActivity extends AppCompatActivity implements OnMapReadyCall
         RecyclerView stationListRecyclerView = (RecyclerView) findViewById(R.id.station_recycler_view);
         stationListRecyclerView.setLayoutManager(new LinearLayoutManager(stationListRecyclerView.getContext()));
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.backdrop_map);
-        mapFragment.getMapAsync(this);
+        int statusCode = com.google.android.gms.common.GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (statusCode == ConnectionResult.SUCCESS) {
+            mapView = (MapView) findViewById(R.id.backdrop_map);
+            mapView.onCreate(savedInstanceState);
+
+            GoogleMap map = mapView.getMap();
+            map.getUiSettings().setMyLocationButtonEnabled(false);
+            map.setMyLocationEnabled(false);
+
+            MapsInitializer.initialize(this);
+
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(19.409, -99.188), 10);
+            map.animateCamera(cameraUpdate);
+        } else {
+            Toast.makeText(this, "Play Service result " + statusCode, Toast.LENGTH_SHORT).show();
+        }
 
         station.number = getIntent().getIntExtra(P.Station.NUMBER, 0);
 
@@ -50,10 +70,42 @@ public class StationActivity extends AppCompatActivity implements OnMapReadyCall
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        LatLng home = new LatLng(19.409, -99.188);
-        googleMap.addMarker(new MarkerOptions().position(home).title("Home"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(home));
-        googleMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+    public void onResume() {
+        super.onResume();
+        if (mapView != null) {
+            mapView.onResume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mapView != null) {
+            mapView.onPause();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mapView != null) {
+            mapView.onDestroy();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mapView != null) {
+            mapView.onSaveInstanceState(outState);
+        }
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (mapView != null) {
+            mapView.onLowMemory();
+        }
     }
 }
